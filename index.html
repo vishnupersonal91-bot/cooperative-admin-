@@ -1,0 +1,3638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cooperative Service Marketplace – Cooperative Admin App</title>
+
+  <!-- Google Fonts: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Admin Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- ==============================================================
+       1. ADMIN LOGIN VIEW
+  ============================================================== -->
+  <div id="view-login" class="login-view-container">
+    <div class="login-card">
+      <div class="login-brand-header">
+        <div class="login-logo-badge">
+          <i data-lucide="shield-check" style="width: 32px; height: 32px;"></i>
+        </div>
+        <h1>Cooperative Admin Portal</h1>
+        <p>Bengaluru Artisans & Labour Labour Cooperative Society</p>
+        <div class="coop-badge-tag">
+          <i data-lucide="award" style="width: 13px; height: 13px;"></i>
+          <span>Reg. No: KA/BLR/COOP/2021/04 • Govt Certified</span>
+        </div>
+      </div>
+
+      <form id="form-admin-login" class="login-form" onsubmit="event.preventDefault(); window.adminApp.handleLogin();">
+        <div class="form-group">
+          <label for="login-coop-id">Cooperative Society ID</label>
+          <div class="input-with-icon">
+            <span class="input-icon-left"><i data-lucide="building-2" style="width: 17px; height: 17px;"></i></span>
+            <input type="text" id="login-coop-id" class="input-field" value="COOP-BLR-560038" placeholder="e.g. COOP-BLR-560038" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="login-username">Username or Mobile Number</label>
+          <div class="input-with-icon">
+            <span class="input-icon-left"><i data-lucide="user" style="width: 17px; height: 17px;"></i></span>
+            <input type="text" id="login-username" class="input-field" value="admin@coopguild.org" placeholder="admin@coopguild.org or 9845001122" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="login-password">Password</label>
+          <div class="input-with-icon">
+            <span class="input-icon-left"><i data-lucide="lock" style="width: 17px; height: 17px;"></i></span>
+            <input type="password" id="login-password" class="input-field" value="coopadmin2026" placeholder="Enter password" required>
+            <span class="input-icon-toggle" id="btn-toggle-password" onclick="window.adminApp.togglePasswordVisibility()">
+              <i data-lucide="eye" id="icon-pwd-eye" style="width: 17px; height: 17px;"></i>
+            </span>
+          </div>
+        </div>
+
+        <div class="login-form-options">
+          <label class="remember-checkbox">
+            <input type="checkbox" checked>
+            <span>Remember terminal</span>
+          </label>
+          <button type="button" class="btn-forgot-password" onclick="window.adminApp.openModal('modal-forgot-password')">
+            Forgot Password?
+          </button>
+        </div>
+
+        <button type="submit" class="btn-login-submit">
+          <span>Sign In to Admin Dashboard</span>
+          <i data-lucide="arrow-right" style="width: 17px; height: 17px;"></i>
+        </button>
+
+        <button type="button" class="btn-demo-credentials" onclick="window.adminApp.fillDemoCredentials()">
+          <i data-lucide="sparkles" style="width: 14px; height: 14px; color: var(--primary-blue);"></i>
+          <span>Auto-fill Demo Admin Credentials</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- ==============================================================
+       2. MAIN ADMIN APPLICATION SHELL (AFTER LOGIN)
+  ============================================================== -->
+  <div id="admin-app-root" class="admin-shell" style="display: none;">
+
+    <!-- ------------------------------------------------------------
+         SIDEBAR NAVIGATION
+    ------------------------------------------------------------ -->
+    <aside class="admin-sidebar" id="admin-sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">
+          <i data-lucide="scale" style="width: 22px; height: 22px;"></i>
+        </div>
+        <div class="sidebar-brand-title">
+          <h2>Cooperative Admin</h2>
+          <span>Labour Federation</span>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav-container">
+        <div class="nav-section-title">Core Operations</div>
+        
+        <div class="nav-item active" data-nav="dashboard" onclick="window.adminApp.navigateTo('dashboard')">
+          <div class="nav-item-content">
+            <i data-lucide="layout-dashboard" style="width: 18px; height: 18px;"></i>
+            <span>Dashboard</span>
+          </div>
+          <span class="nav-badge red" id="nav-emergency-counter" style="display: inline-flex;">1 SOS</span>
+        </div>
+
+        <div class="nav-item" data-nav="workers" onclick="window.adminApp.navigateTo('workers')">
+          <div class="nav-item-content">
+            <i data-lucide="user-check" style="width: 18px; height: 18px;"></i>
+            <span>Workers</span>
+          </div>
+          <span class="nav-badge amber" id="nav-worker-pending-count">3 Pending</span>
+        </div>
+
+        <div class="nav-item" data-nav="customers" onclick="window.adminApp.navigateTo('customers')">
+          <div class="nav-item-content">
+            <i data-lucide="users" style="width: 18px; height: 18px;"></i>
+            <span>Customers</span>
+          </div>
+        </div>
+
+        <div class="nav-item" data-nav="appointments" onclick="window.adminApp.navigateTo('appointments')">
+          <div class="nav-item-content">
+            <i data-lucide="calendar-check" style="width: 18px; height: 18px;"></i>
+            <span>Appointments</span>
+          </div>
+          <span class="nav-badge blue" id="nav-active-booking-tag">CP-9104</span>
+        </div>
+
+        <div class="nav-section-title">Marketplace & Federation</div>
+
+        <div class="nav-item" data-nav="services" onclick="window.adminApp.navigateTo('services')">
+          <div class="nav-item-content">
+            <i data-lucide="wrench" style="width: 18px; height: 18px;"></i>
+            <span>Services</span>
+          </div>
+        </div>
+
+        <div class="nav-item" data-nav="workforce" onclick="window.adminApp.navigateTo('workforce')">
+          <div class="nav-item-content">
+            <i data-lucide="hard-hat" style="width: 18px; height: 18px;"></i>
+            <span>Workforce</span>
+          </div>
+        </div>
+
+        <div class="nav-item" data-nav="welfare" onclick="window.adminApp.navigateTo('welfare')">
+          <div class="nav-item-content">
+            <i data-lucide="shield-plus" style="width: 18px; height: 18px;"></i>
+            <span>Welfare & Insurance</span>
+          </div>
+        </div>
+
+        <div class="nav-item" data-nav="messages" onclick="window.adminApp.navigateTo('messages')">
+          <div class="nav-item-content">
+            <i data-lucide="message-square" style="width: 18px; height: 18px;"></i>
+            <span>Messages</span>
+          </div>
+        </div>
+
+        <div class="nav-item" data-nav="payments" onclick="window.adminApp.navigateTo('payments')">
+          <div class="nav-item-content">
+            <i data-lucide="credit-card" style="width: 18px; height: 18px;"></i>
+            <span>Payments</span>
+          </div>
+        </div>
+
+        <div class="nav-section-title">Analytics & Config</div>
+
+        <div class="nav-item" data-nav="forecast" onclick="window.adminApp.navigateTo('forecast')">
+          <div class="nav-item-content">
+            <i data-lucide="trending-up" style="width: 18px; height: 18px;"></i>
+            <span>AI Forecast</span>
+          </div>
+        </div>
+
+        <div class="nav-item" data-nav="reports" onclick="window.adminApp.navigateTo('reports')">
+          <div class="nav-item-content">
+            <i data-lucide="bar-chart-3" style="width: 18px; height: 18px;"></i>
+            <span>Reports</span>
+          </div>
+        </div>
+
+        <div class="nav-item" data-nav="settings" onclick="window.adminApp.navigateTo('settings')">
+          <div class="nav-item-content">
+            <i data-lucide="settings" style="width: 18px; height: 18px;"></i>
+            <span>Settings</span>
+          </div>
+        </div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="admin-user-profile">
+          <div class="admin-user-info">
+            <div class="admin-avatar">AM</div>
+            <div class="admin-name-role">
+              <h4>A. S. Murthy</h4>
+              <span>Co-op Society Admin</span>
+            </div>
+          </div>
+          <button class="btn-sidebar-logout" onclick="window.adminApp.handleLogout()" title="Sign Out">
+            <i data-lucide="log-out" style="width: 17px; height: 17px;"></i>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ------------------------------------------------------------
+         MAIN WORKSPACE WRAPPER
+    ------------------------------------------------------------ -->
+    <div class="admin-main-wrap">
+
+      <!-- TOP STICKY HEADER -->
+      <header class="admin-header">
+        <div class="header-left">
+          <button class="btn-mobile-sidebar-toggle" id="btn-sidebar-toggle" onclick="window.adminApp.toggleMobileSidebar()">
+            <i data-lucide="menu" style="width: 20px; height: 20px;"></i>
+          </button>
+          <div class="header-page-title-wrap">
+            <h2 id="header-view-title">Cooperative Dashboard</h2>
+            <div class="header-breadcrumb">
+              <span>Cooperative Federation</span>
+              <i data-lucide="chevron-right" style="width: 12px; height: 12px;"></i>
+              <span id="header-breadcrumb-current" style="color: var(--primary-blue); font-weight: 600;">Overview</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <!-- Live Cross-App Sync Status -->
+          <div class="cross-app-status-badge" title="Bidirectional BroadcastChannel & localStorage sync active">
+            <span class="sync-pulse-dot"></span>
+            <span>Customer & Worker Synced</span>
+          </div>
+
+          <!-- Emergency Alert Button -->
+          <button class="btn-emergency-top-alert" id="btn-top-emergency-alert" onclick="window.adminApp.scrollToEmergency()">
+            <i data-lucide="siren" class="emergency-blink" style="width: 15px; height: 15px;"></i>
+            <span>1 Emergency Alert</span>
+          </button>
+
+          <!-- Quick Refresh -->
+          <button class="table-btn-action" onclick="window.adminApp.refreshData(true)" title="Refresh Data">
+            <i data-lucide="rotate-cw" style="width: 15px; height: 15px;"></i>
+          </button>
+
+          <!-- Notifications Bell (PART 3) -->
+          <button class="header-notif-btn" id="btn-header-notifications" onclick="window.adminApp.toggleNotificationsModal()" title="Cooperative Alerts & Notifications">
+            <i data-lucide="bell" style="width: 17px; height: 17px;"></i>
+            <span class="notif-badge" id="header-notif-badge">10</span>
+          </button>
+
+          <!-- Notifications Bell (PART 3) -->
+          <button class="header-notif-btn" id="btn-header-notifications" onclick="window.adminApp.toggleNotificationsModal()" title="Cooperative Alerts & Notifications">
+            <i data-lucide="bell" style="width: 17px; height: 17px;"></i>
+            <span class="notif-badge" id="header-notif-badge">10</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- SIMULATOR CONTROL BAR -->
+      <div class="admin-simulator-bar">
+        <div class="sim-label-left">
+          <i data-lucide="radio" style="width: 14px; height: 14px; color: #60A5FA;"></i>
+          <span>Live Ecosystem Simulation:</span>
+        </div>
+        <div class="sim-buttons-group">
+          <button class="sim-quick-btn blue" onclick="window.adminApp.simulateBooking('INSTANT')" title="Simulate Customer requesting instant service">
+            <i data-lucide="zap" style="width: 12px; height: 12px;"></i> + Instant (CP-9104)
+          </button>
+          <button class="sim-quick-btn blue" onclick="window.adminApp.simulateBooking('PRE-BOOKING')" title="Simulate Customer scheduling pre-booking">
+            <i data-lucide="calendar" style="width: 12px; height: 12px;"></i> + Pre-Booking (CP-9208)
+          </button>
+          <button class="sim-quick-btn red" onclick="window.adminApp.simulateBooking('EMERGENCY')" title="Simulate Emergency SOS dispatch">
+            <i data-lucide="siren" style="width: 12px; height: 12px;"></i> + Emergency SOS
+          </button>
+          <button class="sim-quick-btn blue" onclick="window.adminApp.simulateWorkforceMatch('CP-9104')" title="Match and recommend candidate artisans">
+            <i data-lucide="users" style="width: 12px; height: 12px;"></i> Match Workforce
+          </button>
+          <button class="sim-quick-btn green" onclick="window.adminApp.simulateWorkerAccept('CP-9104')" title="Simulate Worker Ramesh accepting job">
+            <i data-lucide="user-check" style="width: 12px; height: 12px;"></i> Worker Accepts
+          </button>
+          <button class="sim-quick-btn green" onclick="window.adminApp.simulateWorkerStatus('CP-9104', 'On the Way')" title="Simulate Worker en route">
+            <i data-lucide="navigation" style="width: 12px; height: 12px;"></i> On the Way
+          </button>
+          <button class="sim-quick-btn green" onclick="window.adminApp.simulateWorkerStatus('CP-9104', 'Arrived')" title="Simulate Worker arrived">
+            <i data-lucide="map-pin" style="width: 12px; height: 12px;"></i> Arrived
+          </button>
+          <button class="sim-quick-btn purple" onclick="window.adminApp.simulateWorkerStatus('CP-9104', 'In Progress')" title="Simulate repair starting">
+            <i data-lucide="play" style="width: 12px; height: 12px;"></i> In Progress
+          </button>
+          <button class="sim-quick-btn green" onclick="window.adminApp.simulateWorkerStatus('CP-9104', 'Completed')" title="Simulate job completion">
+            <i data-lucide="check-circle" style="width: 12px; height: 12px;"></i> Completed
+          </button>
+        </div>
+      </div>
+
+      <!-- MAIN CONTENT BODY -->
+      <main class="admin-content-body">
+
+        <!-- ==============================================================
+             MODULE 1: DASHBOARD VIEW
+        ============================================================== -->
+        <section id="view-dashboard" class="view-section active">
+
+          <!-- PROMINENT EMERGENCY REQUEST MONITORING BANNER -->
+          <div class="emergency-dashboard-banner" id="dash-emergency-banner">
+            <div class="emergency-banner-left">
+              <div class="emergency-siren-box">
+                <i data-lucide="siren" style="width: 26px; height: 26px;"></i>
+              </div>
+              <div class="emergency-banner-info">
+                <h3>
+                  <span>🚨 EMERGENCY REQUEST IN PROGRESS</span>
+                  <span class="status-pill emergency-type" id="dash-emergency-status-pill">Searching for Worker</span>
+                </h3>
+                <p id="dash-emergency-desc"><strong>Major Pipe Burst / Ceilings Flood</strong> • Customer: <strong>Ananya Sharma</strong> (+91 98450 11223) • Location: <strong>Indiranagar 100ft Rd, Bengaluru</strong></p>
+                <div class="emergency-meta-row">
+                  <span><i data-lucide="users" style="width: 13px; height: 13px; vertical-align: middle;"></i> Nearby Qualified Workers: <strong id="dash-emergency-nearby-workers" style="color: var(--primary-green);">3 Workers</strong></span>
+                  <span><i data-lucide="clock" style="width: 13px; height: 13px; vertical-align: middle;"></i> Response Window: <strong id="dash-emergency-timer" style="color: var(--emergency-red);">&lt; 15 Mins Target</strong></span>
+                  <span><i data-lucide="tag" style="width: 13px; height: 13px; vertical-align: middle;"></i> Booking ID: <strong id="dash-emergency-id" class="table-booking-id">SOS-1092</strong></span>
+                </div>
+              </div>
+            </div>
+            <div class="emergency-banner-actions">
+              <button class="btn-emergency-action primary" onclick="window.adminApp.openAssignWorkerModal('SOS-1092')">
+                <i data-lucide="user-plus" style="width: 15px; height: 15px;"></i>
+                <span>Assign Worker</span>
+              </button>
+              <button class="btn-emergency-action secondary" onclick="window.adminApp.contactParty('customer', 'Ananya Sharma', '+91 98450 11223')">
+                <i data-lucide="phone-call" style="width: 15px; height: 15px;"></i>
+                <span>Contact Customer</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- TOP SUMMARY METRICS GRID -->
+          <div class="dashboard-metrics-grid">
+            
+            <!-- 1. TOTAL WORKERS -->
+            <div class="metric-card">
+              <div class="metric-card-header">
+                <span class="metric-title">Total Workers</span>
+                <div class="metric-icon-wrap blue">
+                  <i data-lucide="user-check" style="width: 20px; height: 20px;"></i>
+                </div>
+              </div>
+              <div class="metric-main-value" id="metric-total-workers">142</div>
+              <div class="metric-sub-pills">
+                <span class="sub-pill green-text"><i data-lucide="check" style="width: 12px; height: 12px;"></i> Verified: <strong id="metric-workers-verified">128</strong></span>
+                <span class="sub-pill amber-text"><i data-lucide="clock" style="width: 12px; height: 12px;"></i> Pending: <strong id="metric-workers-pending">14</strong></span>
+              </div>
+            </div>
+
+            <!-- 2. ACTIVE JOBS -->
+            <div class="metric-card">
+              <div class="metric-card-header">
+                <span class="metric-title">Active Jobs</span>
+                <div class="metric-icon-wrap green">
+                  <i data-lucide="activity" style="width: 20px; height: 20px;"></i>
+                </div>
+              </div>
+              <div class="metric-main-value" id="metric-active-jobs">38</div>
+              <div class="metric-sub-pills">
+                <span class="sub-pill blue-text">In Progress: <strong id="metric-jobs-inprogress">18</strong></span>
+                <span class="sub-pill blue-text">On the Way: <strong id="metric-jobs-ontheway">12</strong></span>
+                <span class="sub-pill red-text">Emergency: <strong id="metric-jobs-emergency">8</strong></span>
+              </div>
+            </div>
+
+            <!-- 3. TODAY'S BOOKINGS -->
+            <div class="metric-card">
+              <div class="metric-card-header">
+                <span class="metric-title">Today's Bookings</span>
+                <div class="metric-icon-wrap amber">
+                  <i data-lucide="calendar" style="width: 20px; height: 20px;"></i>
+                </div>
+              </div>
+              <div class="metric-main-value" id="metric-today-bookings">64</div>
+              <div class="metric-sub-pills">
+                <span class="sub-pill blue-text">Instant: <strong id="metric-bookings-instant">28</strong></span>
+                <span class="sub-pill green-text">Pre-Booking: <strong id="metric-bookings-prebook">26</strong></span>
+                <span class="sub-pill red-text">Emergency: <strong id="metric-bookings-emergency">10</strong></span>
+              </div>
+            </div>
+
+            <!-- 4. AVAILABLE WORKERS -->
+            <div class="metric-card">
+              <div class="metric-card-header">
+                <span class="metric-title">Available Workers</span>
+                <div class="metric-icon-wrap green">
+                  <i data-lucide="radio" style="width: 20px; height: 20px;"></i>
+                </div>
+              </div>
+              <div class="metric-main-value" id="metric-available-workers">96</div>
+              <div class="metric-sub-pills">
+                <span class="sub-pill green-text">Online: <strong id="metric-workers-online">64</strong></span>
+                <span class="sub-pill">Offline: <strong id="metric-workers-offline">12</strong></span>
+                <span class="sub-pill blue-text">Assigned: <strong id="metric-workers-assigned">20</strong></span>
+              </div>
+            </div>
+
+            <!-- 5. TODAY'S SERVICE VALUE -->
+            <div class="metric-card">
+              <div class="metric-card-header">
+                <span class="metric-title">Today's Service Value</span>
+                <div class="metric-icon-wrap blue">
+                  <i data-lucide="indian-rupee" style="width: 20px; height: 20px;"></i>
+                </div>
+              </div>
+              <div class="metric-main-value" id="metric-service-value">₹48,650</div>
+              <div class="metric-sub-pills">
+                <span class="sub-pill green-text">Worker 85%: <strong id="metric-val-worker">₹41,352.50</strong></span>
+                <span class="sub-pill blue-text">Co-op Share 15%: <strong id="metric-val-coop">₹7,297.50</strong></span>
+              </div>
+            </div>
+
+            <!-- 6. PENDING ACTIONS -->
+            <div class="metric-card">
+              <div class="metric-card-header">
+                <span class="metric-title">Pending Actions</span>
+                <div class="metric-icon-wrap red">
+                  <i data-lucide="alert-circle" style="width: 20px; height: 20px;"></i>
+                </div>
+              </div>
+              <div class="metric-main-value" id="metric-pending-actions">18</div>
+              <div class="metric-sub-pills">
+                <span class="sub-pill amber-text">Verification: <strong id="metric-act-verify">14</strong></span>
+                <span class="sub-pill red-text">Complaints: <strong id="metric-act-complaint">2</strong></span>
+                <span class="sub-pill blue-text">Unassigned: <strong id="metric-act-unassigned">1</strong></span>
+                <span class="sub-pill">Payment: <strong id="metric-act-payment">1</strong></span>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- DUAL ANALYTICS & PENDING ACTIONS SECTION -->
+          <div class="dashboard-grid-dual">
+            
+            <!-- Service Value & Earnings Chart -->
+            <div class="card-panel">
+              <div class="card-panel-header">
+                <h3>Today's Service Value & Dividend Distribution</h3>
+                <span class="panel-header-action" onclick="window.adminApp.navigateTo('payments')">View Ledger</span>
+              </div>
+              
+              <div class="chart-container">
+                <!-- SVG Breakdown Chart -->
+                <svg class="chart-svg" viewBox="0 0 500 180" preserveAspectRatio="none">
+                  <defs>
+                    <linearGradient id="gradWorker" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="#059669" stop-opacity="0.9"/>
+                      <stop offset="100%" stop-color="#10B981" stop-opacity="0.3"/>
+                    </linearGradient>
+                    <linearGradient id="gradCoop" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="#1D4ED8" stop-opacity="0.9"/>
+                      <stop offset="100%" stop-color="#3B82F6" stop-opacity="0.3"/>
+                    </linearGradient>
+                  </defs>
+                  
+                  <!-- Grid Lines -->
+                  <line x1="40" y1="20" x2="480" y2="20" stroke="#E2E8F0" stroke-width="1" stroke-dasharray="3 3"/>
+                  <line x1="40" y1="65" x2="480" y2="65" stroke="#E2E8F0" stroke-width="1" stroke-dasharray="3 3"/>
+                  <line x1="40" y1="110" x2="480" y2="110" stroke="#E2E8F0" stroke-width="1" stroke-dasharray="3 3"/>
+                  <line x1="40" y1="150" x2="480" y2="150" stroke="#CBD5E1" stroke-width="1.5"/>
+
+                  <!-- Y-Axis Labels -->
+                  <text x="32" y="24" text-anchor="end" font-size="10" fill="#94A3B8">₹50k</text>
+                  <text x="32" y="69" text-anchor="end" font-size="10" fill="#94A3B8">₹30k</text>
+                  <text x="32" y="114" text-anchor="end" font-size="10" fill="#94A3B8">₹15k</text>
+                  <text x="32" y="154" text-anchor="end" font-size="10" fill="#94A3B8">₹0</text>
+
+                  <!-- Stacked Service Bars: 6 Time Slots -->
+                  <!-- 08:00 AM -->
+                  <rect x="60" y="80" width="36" height="70" rx="4" fill="url(#gradWorker)"/>
+                  <rect x="60" y="65" width="36" height="15" rx="4" fill="url(#gradCoop)"/>
+                  <text x="78" y="168" text-anchor="middle" font-size="11" fill="#64748B">08:00</text>
+
+                  <!-- 10:00 AM -->
+                  <rect x="130" y="55" width="36" height="95" rx="4" fill="url(#gradWorker)"/>
+                  <rect x="130" y="38" width="36" height="17" rx="4" fill="url(#gradCoop)"/>
+                  <text x="148" y="168" text-anchor="middle" font-size="11" fill="#64748B">10:00</text>
+
+                  <!-- 12:00 PM -->
+                  <rect x="200" y="45" width="36" height="105" rx="4" fill="url(#gradWorker)"/>
+                  <rect x="200" y="26" width="36" height="19" rx="4" fill="url(#gradCoop)"/>
+                  <text x="218" y="168" text-anchor="middle" font-size="11" fill="#64748B">12:00</text>
+
+                  <!-- 02:00 PM -->
+                  <rect x="270" y="70" width="36" height="80" rx="4" fill="url(#gradWorker)"/>
+                  <rect x="270" y="56" width="36" height="14" rx="4" fill="url(#gradCoop)"/>
+                  <text x="288" y="168" text-anchor="middle" font-size="11" fill="#64748B">14:00</text>
+
+                  <!-- 04:00 PM -->
+                  <rect x="340" y="50" width="36" height="100" rx="4" fill="url(#gradWorker)"/>
+                  <rect x="340" y="32" width="36" height="18" rx="4" fill="url(#gradCoop)"/>
+                  <text x="358" y="168" text-anchor="middle" font-size="11" fill="#64748B">16:00</text>
+
+                  <!-- Current / Live -->
+                  <rect x="410" y="60" width="36" height="90" rx="4" fill="url(#gradWorker)"/>
+                  <rect x="410" y="44" width="36" height="16" rx="4" fill="url(#gradCoop)"/>
+                  <text x="428" y="168" text-anchor="middle" font-size="11" font-weight="700" fill="#1D4ED8">LIVE</text>
+                </svg>
+              </div>
+
+              <div class="chart-legend-row">
+                <div class="legend-item">
+                  <span class="legend-color-dot" style="background: var(--primary-green);"></span>
+                  <span>Worker Direct Earnings (85%)</span>
+                </div>
+                <div class="legend-item">
+                  <span class="legend-color-dot" style="background: var(--primary-blue);"></span>
+                  <span>Cooperative Welfare & Patronage Share (15%)</span>
+                </div>
+                <div class="legend-item">
+                  <span class="legend-color-dot" style="background: #E2E8F0;"></span>
+                  <span>Zero Middleman Markup (0%)</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Priority Pending Actions -->
+            <div class="card-panel">
+              <div class="card-panel-header">
+                <h3>Priority Pending Actions</h3>
+                <span class="panel-header-action" onclick="window.adminApp.navigateTo('workers')">Review All</span>
+              </div>
+
+              <div class="pending-actions-list">
+                <div class="pending-action-item amber-border" onclick="window.adminApp.navigateTo('workers', 'Pending')">
+                  <div class="pending-item-content">
+                    <i data-lucide="file-check-2" style="width: 18px; height: 18px; color: var(--warning-amber);"></i>
+                    <div>
+                      <h4>Worker Verification</h4>
+                      <p>Trade certificates & ID checks waiting review</p>
+                    </div>
+                  </div>
+                  <span class="pending-count-badge" id="badge-pending-workers">14</span>
+                </div>
+
+                <div class="pending-action-item red-border" onclick="window.adminApp.openAssignWorkerModal('SOS-1092')">
+                  <div class="pending-item-content">
+                    <i data-lucide="siren" style="width: 18px; height: 18px; color: var(--emergency-red);"></i>
+                    <div>
+                      <h4>Unassigned Emergency</h4>
+                      <p>SOS-1092 Pipe Burst requires technician dispatch</p>
+                    </div>
+                  </div>
+                  <span class="pending-count-badge" style="color: var(--emergency-red);">1</span>
+                </div>
+
+                <div class="pending-action-item blue-border" onclick="window.adminApp.navigateTo('customers')">
+                  <div class="pending-item-content">
+                    <i data-lucide="message-square-warning" style="width: 18px; height: 18px; color: var(--primary-blue);"></i>
+                    <div>
+                      <h4>Customer Inquiries</h4>
+                      <p>2 feedback requests on diagnostic time</p>
+                    </div>
+                  </div>
+                  <span class="pending-count-badge">2</span>
+                </div>
+
+                <div class="pending-action-item green-border" onclick="window.adminApp.navigateTo('appointments')">
+                  <div class="pending-item-content">
+                    <i data-lucide="credit-card" style="width: 18px; height: 18px; color: var(--primary-green);"></i>
+                    <div>
+                      <h4>Payment Reconciliation</h4>
+                      <p>CP-8841 UPI dividend credit pending ledger log</p>
+                    </div>
+                  </div>
+                  <span class="pending-count-badge">1</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- LIVE APPOINTMENTS PREVIEW IN DASHBOARD -->
+          <div class="card-panel">
+            <div class="card-panel-header">
+              <h3>Live Service Workflow & Appointments</h3>
+              <span class="panel-header-action" onclick="window.adminApp.navigateTo('appointments')">View All Appointments &rarr;</span>
+            </div>
+
+            <div class="table-responsive-wrapper">
+              <table class="admin-data-table">
+                <thead>
+                  <tr>
+                    <th>Booking ID</th>
+                    <th>Customer</th>
+                    <th>Worker</th>
+                    <th>Service</th>
+                    <th>Request Type</th>
+                    <th>Status</th>
+                    <th>Amount</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="dash-live-appointments-tbody">
+                  <!-- Populated by JavaScript -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </section>
+
+
+        <!-- ==============================================================
+             MODULE 2: WORKER VERIFICATION & SKILL MANAGEMENT VIEW
+        ============================================================== -->
+        <section id="view-workers" class="view-section">
+
+          <!-- TOOLBAR: FILTERS + SEARCH -->
+          <div class="table-filter-toolbar">
+            <div class="filter-left-pills" id="worker-status-filter-pills">
+              <button class="filter-pill-btn active" data-status="ALL">
+                <span>All Workers</span>
+                <span class="nav-badge blue" id="pill-cnt-all-workers">142</span>
+              </button>
+              <button class="filter-pill-btn" data-status="Pending">
+                <span>Pending Verification</span>
+                <span class="nav-badge amber" id="pill-cnt-pending">14</span>
+              </button>
+              <button class="filter-pill-btn" data-status="Under Review">
+                <span>Under Review</span>
+                <span class="nav-badge blue" id="pill-cnt-under-review">6</span>
+              </button>
+              <button class="filter-pill-btn" data-status="Approved">
+                <span>Approved</span>
+                <span class="nav-badge green" id="pill-cnt-approved">118</span>
+              </button>
+              <button class="filter-pill-btn" data-status="Rejected">
+                <span>Rejected</span>
+                <span class="nav-badge red" id="pill-cnt-rejected">2</span>
+              </button>
+              <button class="filter-pill-btn" data-status="Suspended">
+                <span>Suspended</span>
+                <span class="nav-badge" id="pill-cnt-suspended">2</span>
+              </button>
+            </div>
+
+            <div class="filter-right-search">
+              <select class="custom-select" id="worker-skill-select" onchange="window.adminApp.filterWorkersTable()">
+                <option value="ALL">All Trade Skills</option>
+                <option value="Plumbing">Plumbing</option>
+                <option value="Electrical">Electrical</option>
+                <option value="Carpentry">Carpentry</option>
+                <option value="Painting">Painting</option>
+                <option value="Cleaning">Cleaning</option>
+                <option value="Appliance Repair">Appliance Repair</option>
+                <option value="Other">Other Trades</option>
+              </select>
+
+              <select class="custom-select" id="worker-area-select" onchange="window.adminApp.filterWorkersTable()">
+                <option value="ALL">All Service Areas</option>
+                <option value="Indiranagar">Indiranagar & Domlur</option>
+                <option value="Koramangala">Koramangala & HSR</option>
+                <option value="Whitefield">Whitefield & Marathahalli</option>
+                <option value="Central">Central Bengaluru</option>
+              </select>
+
+              <div class="search-input-box">
+                <i data-lucide="search" style="width: 15px; height: 15px;"></i>
+                <input type="text" id="worker-search-input" placeholder="Search name, ID, phone..." oninput="window.adminApp.filterWorkersTable()">
+              </div>
+            </div>
+          </div>
+
+          <!-- WORKERS DATA TABLE -->
+          <div class="data-table-container">
+            <div class="table-responsive-wrapper">
+              <table class="admin-data-table">
+                <thead>
+                  <tr>
+                    <th>Worker Name</th>
+                    <th>Worker ID</th>
+                    <th>Mobile Number</th>
+                    <th>Primary Skill</th>
+                    <th>Experience</th>
+                    <th>Service Area</th>
+                    <th>Application Date</th>
+                    <th>Verification Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="workers-table-tbody">
+                  <!-- Rendered dynamically -->
+                </tbody>
+              </table>
+            </div>
+
+            <div class="table-pagination-footer">
+              <span id="workers-pagination-info">Showing verified and pending cooperative artisans</span>
+              <div>
+                <button class="table-btn-action" onclick="window.adminApp.openNewWorkerModal()">
+                  <i data-lucide="user-plus" style="width: 14px; height: 14px;"></i>
+                  <span>Register Walk-in Artisan</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+
+        <!-- ==============================================================
+             MODULE 3: APPOINTMENT MANAGEMENT & ESTIMATE MONITORING VIEW
+        ============================================================== -->
+        <section id="view-appointments" class="view-section">
+
+          <!-- APPOINTMENT SUB-TABS NAVIGATION -->
+          <div class="view-subtabs-bar">
+            <button class="subtab-btn active" id="subtab-btn-app-list" onclick="window.adminApp.switchAppointmentSubtab('list')">
+              <i data-lucide="calendar" style="width: 15px; height: 15px;"></i>
+              <span>Appointments Directory</span>
+            </button>
+            <button class="subtab-btn" id="subtab-btn-app-estimates" onclick="window.adminApp.switchAppointmentSubtab('estimates')">
+              <i data-lucide="calculator" style="width: 15px; height: 15px;"></i>
+              <span>Estimate Monitoring</span>
+              <span class="nav-badge blue" id="badge-estimates-count">3 Active</span>
+            </button>
+          </div>
+
+          <!-- SUB-TAB 1: APPOINTMENTS LIST (PART 1 PRESERVED) -->
+          <div id="subtab-content-app-list">
+            <!-- TOOLBAR: REQUEST TYPE TABS + STATUS FILTERS -->
+            <div class="table-filter-toolbar">
+              <div class="filter-left-pills" id="appointment-type-filter-pills">
+                <button class="filter-pill-btn active" data-type="ALL">
+                  <span>All Appointments</span>
+                </button>
+                <button class="filter-pill-btn" data-type="INSTANT">
+                  <i data-lucide="zap" style="width: 14px; height: 14px; color: var(--primary-blue);"></i>
+                  <span>Instant (⚡)</span>
+                </button>
+                <button class="filter-pill-btn" data-type="PRE-BOOKING">
+                  <i data-lucide="calendar" style="width: 14px; height: 14px; color: var(--primary-green);"></i>
+                  <span>Pre-Booking (📅)</span>
+                </button>
+                <button class="filter-pill-btn" data-type="EMERGENCY">
+                  <i data-lucide="siren" style="width: 14px; height: 14px; color: var(--emergency-red);"></i>
+                  <span>Emergency (🚨)</span>
+                </button>
+              </div>
+
+              <div class="filter-right-search">
+                <select class="custom-select" id="appointment-status-select" onchange="window.adminApp.filterAppointmentsTable()">
+                  <option value="ALL">All Statuses</option>
+                  <option value="Requested">Requested</option>
+                  <option value="Matching">Matching</option>
+                  <option value="Worker Assigned">Worker Assigned</option>
+                  <option value="Confirmed">Confirmed</option>
+                  <option value="On the Way">On the Way</option>
+                  <option value="Arrived">Arrived</option>
+                  <option value="In Progress">In Progress</option>
+                  <option value="Completed">Completed</option>
+                  <option value="Cancelled">Cancelled</option>
+                </select>
+
+                <div class="search-input-box">
+                  <i data-lucide="search" style="width: 15px; height: 15px;"></i>
+                  <input type="text" id="appointment-search-input" placeholder="Search Booking ID (e.g. CP-9104)..." oninput="window.adminApp.filterAppointmentsTable()">
+                </div>
+              </div>
+            </div>
+
+            <!-- APPOINTMENTS DATA TABLE -->
+            <div class="data-table-container">
+              <div class="table-responsive-wrapper">
+                <table class="admin-data-table">
+                  <thead>
+                    <tr>
+                      <th>Booking ID</th>
+                      <th>Customer</th>
+                      <th>Worker</th>
+                      <th>Service</th>
+                      <th>Date & Time</th>
+                      <th>Location</th>
+                      <th>Request Type</th>
+                      <th>Status</th>
+                      <th>Amount</th>
+                      <th>Admin Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="appointments-table-tbody">
+                    <!-- Rendered dynamically -->
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="table-pagination-footer">
+                <span id="appointments-pagination-info">Real-time synchronized appointments across Customer & Worker apps</span>
+                <div>
+                  <button class="table-btn-action" onclick="window.adminApp.openNewBookingModal()">
+                    <i data-lucide="plus" style="width: 14px; height: 14px;"></i>
+                    <span>Manual Co-op Desk Booking</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SUB-TAB 2: ESTIMATE MONITORING (PART 2) -->
+          <div id="subtab-content-app-estimates" style="display: none;">
+            <div style="background: #EFF6FF; border: 1px solid #BFDBFE; border-radius: var(--radius-md); padding: 14px 18px; margin-bottom: 18px; display: flex; align-items: center; justify-content: space-between;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="width: 38px; height: 38px; border-radius: 10px; background: var(--primary-blue); color: #FFFFFF; display: flex; align-items: center; justify-content: center;">
+                  <i data-lucide="shield-alert" style="width: 20px; height: 20px;"></i>
+                </div>
+                <div>
+                  <h4 style="font-size: 14px; font-weight: 800; color: var(--primary-blue);">Doorstep Estimate Oversight & Audit Protocol</h4>
+                  <p style="font-size: 12px; color: var(--text-body);">Worker creates estimate &rarr; Customer receives estimate &rarr; Admin monitors. Approved customer estimates remain locked and cannot be altered silently.</p>
+                </div>
+              </div>
+              <span class="status-pill approved">0% Markups Audit Active</span>
+            </div>
+
+            <div class="table-filter-toolbar">
+              <div class="filter-left-pills" id="estimate-filter-pills">
+                <button class="filter-pill-btn active" data-status="ALL" onclick="window.adminApp.filterEstimates('ALL')">
+                  <span>All Estimates</span>
+                </button>
+                <button class="filter-pill-btn" data-status="Customer Approved" onclick="window.adminApp.filterEstimates('Customer Approved')">
+                  <span>Approved by Customer</span>
+                </button>
+                <button class="filter-pill-btn" data-status="Sent to Customer" onclick="window.adminApp.filterEstimates('Sent to Customer')">
+                  <span>Pending Customer Approval</span>
+                </button>
+                <button class="filter-pill-btn" data-status="Flagged for Review" onclick="window.adminApp.filterEstimates('Flagged for Review')">
+                  <span>Flagged for Review</span>
+                </button>
+              </div>
+
+              <div class="filter-right-search">
+                <div class="search-input-box">
+                  <i data-lucide="search" style="width: 15px; height: 15px;"></i>
+                  <input type="text" id="estimate-search-input" placeholder="Search Estimate by Booking ID..." oninput="window.adminApp.filterEstimatesTable()">
+                </div>
+              </div>
+            </div>
+
+            <div class="data-table-container">
+              <div class="table-responsive-wrapper">
+                <table class="admin-data-table">
+                  <thead>
+                    <tr>
+                      <th>Booking ID</th>
+                      <th>Customer</th>
+                      <th>Worker</th>
+                      <th>Service Problem</th>
+                      <th>Labour Cost</th>
+                      <th>Material Cost</th>
+                      <th>Emergency Fee</th>
+                      <th>Total Estimate</th>
+                      <th>Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="estimates-table-tbody">
+                    <!-- Populated dynamically -->
+                  </tbody>
+                </table>
+              </div>
+              <div class="table-pagination-footer">
+                <span>All estimates strictly audited against Cooperative Approved Rate Cards</span>
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+
+        <!-- ==============================================================
+             MODULE 4: CUSTOMER MANAGEMENT & SUPPORT TICKETS VIEW
+        ============================================================== -->
+        <section id="view-customers" class="view-section">
+
+          <!-- CUSTOMER SUB-TABS NAVIGATION -->
+          <div class="view-subtabs-bar">
+            <button class="subtab-btn active" id="subtab-btn-cust-list" onclick="window.adminApp.switchCustomerSubtab('list')">
+              <i data-lucide="users" style="width: 15px; height: 15px;"></i>
+              <span>Customer Accounts</span>
+            </button>
+            <button class="subtab-btn" id="subtab-btn-cust-tickets" onclick="window.adminApp.switchCustomerSubtab('tickets')">
+              <i data-lucide="life-buoy" style="width: 15px; height: 15px;"></i>
+              <span>Support Tickets</span>
+              <span class="nav-badge red" id="badge-tickets-open-count">2 Open</span>
+            </button>
+          </div>
+
+          <!-- SUB-TAB 1: CUSTOMER LIST (PART 1 PRESERVED) -->
+          <div id="subtab-content-cust-list">
+            <div class="table-filter-toolbar">
+              <div class="filter-left-pills">
+                <button class="filter-pill-btn active">
+                  <span>All Customers</span>
+                  <span class="nav-badge blue">540</span>
+                </button>
+                <button class="filter-pill-btn">
+                  <span>Active Service Today</span>
+                  <span class="nav-badge green">38</span>
+                </button>
+                <button class="filter-pill-btn">
+                  <span>Patronage Dividend Members</span>
+                  <span class="nav-badge purple">412</span>
+                </button>
+              </div>
+
+              <div class="filter-right-search">
+                <div class="search-input-box">
+                  <i data-lucide="search" style="width: 15px; height: 15px;"></i>
+                  <input type="text" id="customer-search-input" placeholder="Search customer name, ID, phone..." oninput="window.adminApp.filterCustomersTable()">
+                </div>
+              </div>
+            </div>
+
+            <div class="data-table-container">
+              <div class="table-responsive-wrapper">
+                <table class="admin-data-table">
+                  <thead>
+                    <tr>
+                      <th>Customer Name</th>
+                      <th>Customer ID</th>
+                      <th>Mobile</th>
+                      <th>Total Bookings</th>
+                      <th>Active Booking</th>
+                      <th>Completed Jobs</th>
+                      <th>Payment Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="customers-table-tbody">
+                    <!-- Rendered dynamically -->
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="table-pagination-footer">
+                <span>Cooperative Member-Customers with Transparent Pricing & Patronage Dividend Records</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- SUB-TAB 2: SUPPORT TICKETS (PART 2) -->
+          <div id="subtab-content-cust-tickets" style="display: none;">
+            <div class="table-filter-toolbar">
+              <div class="filter-left-pills" id="ticket-status-pills">
+                <button class="filter-pill-btn active" data-status="ALL" onclick="window.adminApp.filterTickets('ALL')">
+                  <span>All Tickets</span>
+                  <span class="nav-badge blue" id="pill-cnt-all-tickets">5</span>
+                </button>
+                <button class="filter-pill-btn" data-status="Open" onclick="window.adminApp.filterTickets('Open')">
+                  <span>Open</span>
+                  <span class="nav-badge red" id="pill-cnt-open-tickets">2</span>
+                </button>
+                <button class="filter-pill-btn" data-status="In Progress" onclick="window.adminApp.filterTickets('In Progress')">
+                  <span>In Progress</span>
+                  <span class="nav-badge amber">2</span>
+                </button>
+                <button class="filter-pill-btn" data-status="Resolved" onclick="window.adminApp.filterTickets('Resolved')">
+                  <span>Resolved</span>
+                  <span class="nav-badge green">1</span>
+                </button>
+              </div>
+
+              <div class="filter-right-search">
+                <select class="custom-select" id="ticket-issue-filter" onchange="window.adminApp.filterTicketsTable()">
+                  <option value="ALL">All Issue Types</option>
+                  <option value="Booking Issue">Booking Issue</option>
+                  <option value="Worker Issue">Worker Issue</option>
+                  <option value="Payment Issue">Payment Issue</option>
+                  <option value="Service Complaint">Service Complaint</option>
+                  <option value="Emergency Support">Emergency Support</option>
+                  <option value="Refund Request">Refund Request</option>
+                  <option value="Other Issue">Other Issue</option>
+                </select>
+
+                <div class="search-input-box">
+                  <i data-lucide="search" style="width: 15px; height: 15px;"></i>
+                  <input type="text" id="ticket-search-input" placeholder="Search Ticket ID or Customer..." oninput="window.adminApp.filterTicketsTable()">
+                </div>
+              </div>
+            </div>
+
+            <div class="data-table-container">
+              <div class="table-responsive-wrapper">
+                <table class="admin-data-table">
+                  <thead>
+                    <tr>
+                      <th>Ticket ID</th>
+                      <th>Customer</th>
+                      <th>Booking ID</th>
+                      <th>Issue & Problem</th>
+                      <th>Priority</th>
+                      <th>Assigned Staff</th>
+                      <th>Created Date</th>
+                      <th>Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tickets-table-tbody">
+                    <!-- Populated dynamically -->
+                  </tbody>
+                </table>
+              </div>
+              <div class="table-pagination-footer">
+                <span>Direct customer escalation line backed by Cooperative Ombudsperson service guarantee</span>
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+
+        <!-- ==============================================================
+             PLACEHOLDERS FOR FUTURE MODULES (PARTS 2 & 3)
+             Ready state maintaining identical layout, colors, navigation
+        ============================================================== -->
+        <!-- ==============================================================
+             MODULE 5: SERVICE MANAGEMENT, MONTHLY RATES & MATERIAL COSTS
+        ============================================================== -->
+        <section id="view-services" class="view-section">
+
+          <!-- SERVICES SUB-TABS NAVIGATION -->
+          <div class="view-subtabs-bar">
+            <button class="subtab-btn active" id="subtab-btn-svc-catalog" onclick="window.adminApp.switchServicesSubtab('catalog')">
+              <i data-lucide="wrench" style="width: 15px; height: 15px;"></i>
+              <span>Service Catalog (7 Divisions)</span>
+            </button>
+            <button class="subtab-btn" id="subtab-btn-svc-rates" onclick="window.adminApp.switchServicesSubtab('rates')">
+              <i data-lucide="trending-up" style="width: 15px; height: 15px;"></i>
+              <span>Monthly Rate Management</span>
+              <span class="nav-badge green">Sep 2026 Active</span>
+            </button>
+            <button class="subtab-btn" id="subtab-btn-svc-materials" onclick="window.adminApp.switchServicesSubtab('materials')">
+              <i data-lucide="boxes" style="width: 15px; height: 15px;"></i>
+              <span>Material Cost Management</span>
+            </button>
+          </div>
+
+          <!-- SUB-TAB 1: SERVICE CATALOG DIRECTORY -->
+          <div id="subtab-content-svc-catalog">
+            <div class="table-filter-toolbar">
+              <div class="filter-left-pills" id="svc-cat-filter-pills">
+                <button class="filter-pill-btn active" data-cat="ALL" onclick="window.adminApp.filterServicesCategory('ALL')">
+                  <span>All Trade Divisions</span>
+                </button>
+                <button class="filter-pill-btn" data-cat="Plumbing" onclick="window.adminApp.filterServicesCategory('Plumbing')">
+                  <span>Plumbing</span>
+                </button>
+                <button class="filter-pill-btn" data-cat="Electrical" onclick="window.adminApp.filterServicesCategory('Electrical')">
+                  <span>Electrical</span>
+                </button>
+                <button class="filter-pill-btn" data-cat="Carpentry" onclick="window.adminApp.filterServicesCategory('Carpentry')">
+                  <span>Carpentry</span>
+                </button>
+                <button class="filter-pill-btn" data-cat="Painting" onclick="window.adminApp.filterServicesCategory('Painting')">
+                  <span>Painting</span>
+                </button>
+                <button class="filter-pill-btn" data-cat="Cleaning" onclick="window.adminApp.filterServicesCategory('Cleaning')">
+                  <span>Cleaning</span>
+                </button>
+                <button class="filter-pill-btn" data-cat="Appliance Repair" onclick="window.adminApp.filterServicesCategory('Appliance Repair')">
+                  <span>Appliance Repair</span>
+                </button>
+                <button class="filter-pill-btn" data-cat="Other Services" onclick="window.adminApp.filterServicesCategory('Other Services')">
+                  <span>Other Services</span>
+                </button>
+              </div>
+
+              <div class="filter-right-search">
+                <div class="search-input-box">
+                  <i data-lucide="search" style="width: 15px; height: 15px;"></i>
+                  <input type="text" id="svc-search-input" placeholder="Search service name or skill..." oninput="window.adminApp.filterServicesTable()">
+                </div>
+                <button class="table-btn-action primary" onclick="window.adminApp.openAddServiceModal()">
+                  <i data-lucide="plus" style="width: 14px; height: 14px;"></i>
+                  <span>Add Service</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="data-table-container">
+              <div class="table-responsive-wrapper">
+                <table class="admin-data-table">
+                  <thead>
+                    <tr>
+                      <th>Service Name</th>
+                      <th>Description</th>
+                      <th>Required Skill</th>
+                      <th>Labour Time</th>
+                      <th>Base Labour Fee</th>
+                      <th>Emergency Fee</th>
+                      <th>Material Category</th>
+                      <th>Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="services-table-tbody">
+                    <!-- Populated dynamically -->
+                  </tbody>
+                </table>
+              </div>
+              <div class="table-pagination-footer">
+                <span>Standardized cooperative labour fees reviewed monthly by member assembly</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- SUB-TAB 2: MONTHLY SERVICE RATE MANAGEMENT -->
+          <div id="subtab-content-svc-rates" style="display: none;">
+            
+            <!-- Rate Board Overview Card -->
+            <div class="card-panel" style="margin-bottom: 20px;">
+              <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: gap; gap: 14px; border-bottom: 1px solid var(--border-light); padding-bottom: 16px; margin-bottom: 16px;">
+                <div>
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <h3 style="font-size: 18px; font-weight: 800; color: var(--text-main);">Monthly Service Rate Revision Board</h3>
+                    <span class="status-pill approved" id="rate-board-status-badge">Published & Live</span>
+                  </div>
+                  <p style="font-size: 12.5px; color: var(--text-muted); margin-top: 4px;">
+                    Effective Month: <strong>September 2026</strong> • Previous: <strong>August 2026</strong> • Last Updated By: <strong>A. S. Murthy (Co-op Secretary)</strong> • Effective From: <strong>01 Sep 2026</strong>
+                  </p>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <button class="table-btn-action" onclick="window.adminApp.openRateEditModal()">
+                    <i data-lucide="edit-3" style="width: 14px; height: 14px;"></i>
+                    <span>Edit Rates</span>
+                  </button>
+                  <button class="table-btn-action" style="background: var(--primary-blue-light); color: var(--primary-blue);" onclick="window.adminApp.saveRateDraft()">
+                    <i data-lucide="save" style="width: 14px; height: 14px;"></i>
+                    <span>Save</span>
+                  </button>
+                  <button class="table-btn-action" style="background: var(--warning-amber-light); color: var(--warning-amber);" onclick="window.adminApp.approveRateBoard()">
+                    <i data-lucide="check-square" style="width: 14px; height: 14px;"></i>
+                    <span>Approve</span>
+                  </button>
+                  <button class="table-btn-action primary" style="background: var(--primary-green); border-color: var(--primary-green);" onclick="window.adminApp.publishMonthlyRates()">
+                    <i data-lucide="upload-cloud" style="width: 14px; height: 14px;"></i>
+                    <span>Publish Rates</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Important Booking Protection Alert -->
+              <div style="background: #F0FDF4; border: 1.5px solid #BBF7D0; border-radius: var(--radius-md); padding: 12px 16px; display: flex; align-items: center; gap: 12px;">
+                <i data-lucide="shield-check" style="width: 22px; height: 22px; color: var(--primary-green); flex-shrink: 0;"></i>
+                <div style="font-size: 12.5px; color: #166534;">
+                  <strong>Customer & Artisan Protection Guarantee:</strong> When published, newly revised rates apply exclusively to <strong>NEW incoming bookings</strong>. Existing confirmed bookings (<span class="table-booking-id">CP-9104</span>, <span class="table-booking-id">CP-9208</span>) and customer-approved estimates are protected and remain locked at their agreed values.
+                </div>
+              </div>
+            </div>
+
+            <!-- Monthly Rates Table -->
+            <div class="data-table-container">
+              <div class="table-responsive-wrapper">
+                <table class="admin-data-table">
+                  <thead>
+                    <tr>
+                      <th>Service Name</th>
+                      <th>Previous Labour Rate (Aug 2026)</th>
+                      <th>Current Labour Rate (Sep 2026)</th>
+                      <th>Net Change</th>
+                      <th>Emergency Rate</th>
+                      <th>Rate Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="rates-table-tbody">
+                    <!-- Populated dynamically -->
+                  </tbody>
+                </table>
+              </div>
+              <div class="table-pagination-footer">
+                <span>Monthly rate adjustments require Cooperative Supervisory Board ratification</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- SUB-TAB 3: MATERIAL COST MANAGEMENT -->
+          <div id="subtab-content-svc-materials" style="display: none;">
+            <div class="table-filter-toolbar">
+              <div class="filter-left-pills" id="mat-cat-filter-pills">
+                <button class="filter-pill-btn active" data-cat="ALL" onclick="window.adminApp.filterMaterialsCategory('ALL')">
+                  <span>All Standard Materials</span>
+                </button>
+                <button class="filter-pill-btn" data-cat="Plumbing" onclick="window.adminApp.filterMaterialsCategory('Plumbing')">
+                  <span>Plumbing Hardware</span>
+                </button>
+                <button class="filter-pill-btn" data-cat="Electrical" onclick="window.adminApp.filterMaterialsCategory('Electrical')">
+                  <span>Electrical Components</span>
+                </button>
+                <button class="filter-pill-btn" data-cat="Paint" onclick="window.adminApp.filterMaterialsCategory('Paint')">
+                  <span>Paints & Solvents</span>
+                </button>
+                <button class="filter-pill-btn" data-cat="Chemicals" onclick="window.adminApp.filterMaterialsCategory('Chemicals')">
+                  <span>Cleaning Supplies</span>
+                </button>
+              </div>
+
+              <div class="filter-right-search">
+                <div class="search-input-box">
+                  <i data-lucide="search" style="width: 15px; height: 15px;"></i>
+                  <input type="text" id="mat-search-input" placeholder="Search material name or category..." oninput="window.adminApp.filterMaterialsTable()">
+                </div>
+                <button class="table-btn-action primary" onclick="window.adminApp.openAddMaterialModal()">
+                  <i data-lucide="plus" style="width: 14px; height: 14px;"></i>
+                  <span>Add Material</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="data-table-container">
+              <div class="table-responsive-wrapper">
+                <table class="admin-data-table">
+                  <thead>
+                    <tr>
+                      <th>Material Name</th>
+                      <th>Category</th>
+                      <th>Previous Cost (Aug)</th>
+                      <th>Current Cost (Sep)</th>
+                      <th>Effective Month</th>
+                      <th>Last Updated</th>
+                      <th>Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="materials-table-tbody">
+                    <!-- Populated dynamically -->
+                  </tbody>
+                </table>
+              </div>
+              <div class="table-pagination-footer">
+                <span>Materials sourced at wholesale cooperative bulk discount and billed without middleman profit</span>
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ==============================================================
+             MODULE 5: WORKFORCE ALLOCATION & AVAILABILITY (PART 3)
+        ============================================================== -->
+        <section id="view-workforce" class="view-section">
+
+          <!-- SUB-TABS NAVIGATION -->
+          <div class="view-subtabs-bar">
+            <button class="subtab-btn active" id="subtab-btn-wf-alloc" onclick="window.adminApp.switchWorkforceSubtab('alloc')">
+              <i data-lucide="user-check" style="width: 15px; height: 15px;"></i>
+              <span>Workforce Allocation & Matching</span>
+            </button>
+            <button class="subtab-btn" id="subtab-btn-wf-avail" onclick="window.adminApp.switchWorkforceSubtab('avail')">
+              <i data-lucide="activity" style="width: 15px; height: 15px;"></i>
+              <span>Workforce Availability & Sectors</span>
+            </button>
+          </div>
+
+          <!-- SUBTAB 1: WORKFORCE ALLOCATION -->
+          <div id="subtab-content-wf-alloc">
+
+            <!-- Active Request Selector & Summary Card -->
+            <div class="allocation-request-banner">
+              <div class="allocation-request-details">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                  <span class="status-pill approved" style="font-size: 11px;">NEW REQUEST ACTIVE</span>
+                  <span class="table-booking-id" id="alloc-active-booking-id">CP-9104</span>
+                  <span class="status-pill under-review" id="alloc-active-urgency">⚡ Instant Dispatch</span>
+                </div>
+                <h4 id="alloc-active-service-title">Service: Plumbing Leakage & Pipe Repair</h4>
+                <div style="font-size: 12.5px; color: var(--text-muted);" id="alloc-active-meta">
+                  Customer: <strong>P. Vishnu Vardhan</strong> • Location: <strong>Indiranagar 100ft Rd, Bengaluru</strong> • Response Target: <strong>&lt; 15 mins</strong>
+                </div>
+              </div>
+
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <label style="font-size: 12px; font-weight: 700; color: var(--text-muted);">Switch Request:</label>
+                <select id="alloc-request-select" class="input-field" style="width: 220px; padding: 6px 12px; font-size: 12.5px;" onchange="window.adminApp.onAllocationRequestChange()">
+                  <option value="CP-9104">CP-9104 (Plumbing • Indiranagar)</option>
+                  <option value="SOS-1092">SOS-1092 (Emergency Pipe Burst)</option>
+                  <option value="CP-9208">CP-9208 (Pre-Booking • Indiranagar)</option>
+                  <option value="CP-8841">CP-8841 (Plumbing Diagnostic)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Matching Criteria Weights Info Bar -->
+            <div style="background: #F8FAFC; border: 1px solid var(--border-light); border-radius: var(--radius-sm); padding: 10px 16px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; font-size: 12px; color: var(--text-muted);">
+              <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
+                <span style="font-weight: 700; color: var(--text-main);">AI Matching Criteria:</span>
+                <span>① Skill Match</span>
+                <span>② Proximity / Distance</span>
+                <span>③ Online Availability</span>
+                <span>④ Workload &amp; Active Jobs</span>
+                <span>⑤ Service Area</span>
+                <span>⑥ Emergency Readiness</span>
+                <span>⑦ Current Assignments</span>
+                <span>⑧ Historical Rating</span>
+              </div>
+              <span class="status-pill approved" style="font-size: 11px;">Manual Override Enabled</span>
+            </div>
+
+            <!-- Candidate Artisans Grid -->
+            <div class="allocation-candidates-grid" id="allocation-candidates-container">
+              <!-- Dynamically populated candidate cards -->
+            </div>
+
+          </div>
+
+          <!-- SUBTAB 2: WORKFORCE AVAILABILITY -->
+          <div id="subtab-content-wf-avail" style="display: none;">
+
+            <!-- Availability KPI Cards -->
+            <div class="availability-grid-cards">
+              <div class="avail-card">
+                <div class="avail-card-label">Total Artisans</div>
+                <div class="avail-card-num" style="color: var(--primary-blue);" id="avail-kpi-total">142</div>
+                <span class="badge-tag">Registered Members</span>
+              </div>
+              <div class="avail-card">
+                <div class="avail-card-label">Online &amp; Ready</div>
+                <div class="avail-card-num" style="color: var(--primary-green-dark);" id="avail-kpi-online">64</div>
+                <span class="status-indicator-dot online" style="margin: 0 auto;"></span>
+              </div>
+              <div class="avail-card">
+                <div class="avail-card-label">On Active Job</div>
+                <div class="avail-card-num" style="color: var(--primary-blue);" id="avail-kpi-assigned">20</div>
+                <span class="status-pill under-review" style="font-size: 10px; padding: 1px 6px;">Dispatched</span>
+              </div>
+              <div class="avail-card">
+                <div class="avail-card-label">Available Buffer</div>
+                <div class="avail-card-num" style="color: var(--primary-green-dark);" id="avail-kpi-available">96</div>
+                <span class="status-pill approved" style="font-size: 10px; padding: 1px 6px;">Shift Ready</span>
+              </div>
+              <div class="avail-card">
+                <div class="avail-card-label">Emergency Standby</div>
+                <div class="avail-card-num" style="color: var(--emergency-red);" id="avail-kpi-emergency">38</div>
+                <span class="status-pill emergency-type" style="font-size: 10px; padding: 1px 6px;">⚡ SOS Fast Response</span>
+              </div>
+              <div class="avail-card">
+                <div class="avail-card-label">Offline / Off-Duty</div>
+                <div class="avail-card-num" style="color: var(--text-muted);" id="avail-kpi-offline">12</div>
+                <span class="status-indicator-dot offline" style="margin: 0 auto;"></span>
+              </div>
+            </div>
+
+            <!-- Skill Breakdown & Area Density Grid -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px;">
+
+              <!-- Trade Skill Availability Bars -->
+              <div class="card-panel" style="margin-bottom: 0;">
+                <div class="card-panel-header">
+                  <h3>Artisan Capacity by Trade Division</h3>
+                  <span class="nav-badge blue">6 Primary Trades</span>
+                </div>
+
+                <div id="skill-availability-bars-container">
+                  <!-- Rendered dynamically -->
+                </div>
+              </div>
+
+              <!-- Service Area Coverage -->
+              <div class="card-panel" style="margin-bottom: 0;">
+                <div class="card-panel-header">
+                  <h3>Bengaluru Service Area Deployment</h3>
+                  <span class="nav-badge green">GPS Sectors</span>
+                </div>
+
+                <div id="area-availability-bars-container">
+                  <!-- Rendered dynamically -->
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Live Artisan Sector Deployments Table -->
+            <div class="card-panel">
+              <div class="card-panel-header">
+                <h3>Live Artisan Deployment Roster</h3>
+                <div style="display: flex; gap: 10px;">
+                  <button class="table-btn-action" onclick="window.adminApp.rebalanceArtisanShifts()">
+                    <i data-lucide="refresh-cw" style="width: 13px; height: 13px;"></i>
+                    <span>Rebalance Shifts</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Artisan Member</th>
+                      <th>Primary Trade</th>
+                      <th>Sector / Zone</th>
+                      <th>Status &amp; Shift</th>
+                      <th>Emergency Ready</th>
+                      <th>Current Load</th>
+                      <th>Daily Limit</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="workforce-deployments-tbody">
+                    <!-- Rendered dynamically -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
+
+        </section>
+
+        <!-- ==============================================================
+             MODULE 6: ARTISAN WELFARE & GROUP INSURANCE POOL
+        ============================================================== -->
+        <section id="view-welfare" class="view-section">
+          
+          <!-- WELFARE & INSURANCE SUB-TABS NAVIGATION -->
+          <div class="view-subtabs-bar">
+            <button class="subtab-btn active" id="subtab-btn-welfare-prog" onclick="window.adminApp.switchWelfareSubtab('programs')">
+              <i data-lucide="heart-handshake" style="width: 15px; height: 15px;"></i>
+              <span>Worker Welfare Programs</span>
+              <span class="nav-badge green">7 Programs Active</span>
+            </button>
+            <button class="subtab-btn" id="subtab-btn-welfare-ins" onclick="window.adminApp.switchWelfareSubtab('insurance')">
+              <i data-lucide="shield-plus" style="width: 15px; height: 15px;"></i>
+              <span>Worker Insurance Registry</span>
+              <span class="nav-badge amber" id="badge-insurance-expiring">2 Expiring Soon</span>
+            </button>
+          </div>
+
+          <!-- SUB-TAB 1: WORKER WELFARE PROGRAMS -->
+          <div id="subtab-content-welfare-prog">
+            
+            <!-- Welfare KPI Metrics Grid -->
+            <div class="dashboard-metrics-grid" style="margin-bottom: 20px;">
+              <div class="metric-card">
+                <div class="metric-card-header">
+                  <span class="metric-title">Co-op Welfare Reserve</span>
+                  <div class="metric-icon-wrap green"><i data-lucide="piggy-bank" style="width: 18px; height: 18px;"></i></div>
+                </div>
+                <div class="metric-main-value">₹4,85,000</div>
+                <div class="metric-sub-pills">
+                  <span class="sub-pill green-text">Funded via 15% co-op operational pool</span>
+                </div>
+              </div>
+
+              <div class="metric-card">
+                <div class="metric-card-header">
+                  <span class="metric-title">Active Beneficiaries</span>
+                  <div class="metric-icon-wrap blue"><i data-lucide="users" style="width: 18px; height: 18px;"></i></div>
+                </div>
+                <div class="metric-main-value">34 Artisans</div>
+                <div class="metric-sub-pills">
+                  <span class="sub-pill blue-text">Covered across 7 welfare programs</span>
+                </div>
+              </div>
+
+              <div class="metric-card">
+                <div class="metric-card-header">
+                  <span class="metric-title">Disbursed This Month</span>
+                  <div class="metric-icon-wrap amber"><i data-lucide="send" style="width: 18px; height: 18px;"></i></div>
+                </div>
+                <div class="metric-main-value">₹62,500</div>
+                <div class="metric-sub-pills">
+                  <span class="sub-pill">12 grants approved</span>
+                </div>
+              </div>
+
+              <div class="metric-card">
+                <div class="metric-card-header">
+                  <span class="metric-title">Emergency Support Fund</span>
+                  <div class="metric-icon-wrap red"><i data-lucide="shield-alert" style="width: 18px; height: 18px;"></i></div>
+                </div>
+                <div class="metric-main-value">₹1,50,000</div>
+                <div class="metric-sub-pills">
+                  <span class="sub-pill red-text">Immediate liquidity for accidents</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Welfare Members Table & Benefits Log -->
+            <div class="card-panel" style="margin-bottom: 20px;">
+              <div class="table-filter-toolbar">
+                <div class="filter-left-pills" id="welfare-program-filter-pills">
+                  <button class="filter-pill-btn active" data-prog="ALL" onclick="window.adminApp.filterWelfareProgram('ALL')">
+                    <span>All Programs</span>
+                  </button>
+                  <button class="filter-pill-btn" data-prog="Welfare Fund" onclick="window.adminApp.filterWelfareProgram('Welfare Fund')">
+                    <span>Welfare Fund</span>
+                  </button>
+                  <button class="filter-pill-btn" data-prog="Emergency Financial Support" onclick="window.adminApp.filterWelfareProgram('Emergency Financial Support')">
+                    <span>Emergency Financial Support</span>
+                  </button>
+                  <button class="filter-pill-btn" data-prog="Accident Support" onclick="window.adminApp.filterWelfareProgram('Accident Support')">
+                    <span>Accident Support</span>
+                  </button>
+                  <button class="filter-pill-btn" data-prog="Safety Equipment Support" onclick="window.adminApp.filterWelfareProgram('Safety Equipment Support')">
+                    <span>Safety Equipment</span>
+                  </button>
+                  <button class="filter-pill-btn" data-prog="Skill Development" onclick="window.adminApp.filterWelfareProgram('Skill Development')">
+                    <span>Skill Development</span>
+                  </button>
+                </div>
+
+                <div class="filter-right-search">
+                  <button class="table-btn-action primary" onclick="window.adminApp.openRecordWelfareModal()">
+                    <i data-lucide="plus-circle" style="width: 14px; height: 14px;"></i>
+                    <span>Record Benefit / Support</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="data-table-container">
+                <div class="table-responsive-wrapper">
+                  <table class="admin-data-table">
+                    <thead>
+                      <tr>
+                        <th>Worker</th>
+                        <th>Worker ID</th>
+                        <th>Completed Jobs</th>
+                        <th>Earnings (YTD)</th>
+                        <th>Welfare Eligibility</th>
+                        <th>Active Benefits</th>
+                        <th>Support Requests</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody id="welfare-workers-tbody">
+                      <!-- Populated dynamically -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- Recent Welfare Grants & Disbursements History -->
+            <div class="card-panel">
+              <div class="card-panel-header">
+                <h3>Recent Welfare Disbursements & Support Requests</h3>
+                <span class="nav-badge green">Audit Log Live</span>
+              </div>
+              <div class="table-responsive-wrapper">
+                <table class="admin-data-table">
+                  <thead>
+                    <tr>
+                      <th>Worker Name</th>
+                      <th>Benefit Program</th>
+                      <th>Amount / Support</th>
+                      <th>Disbursement Date</th>
+                      <th>Status</th>
+                      <th>Remarks</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="welfare-history-tbody">
+                    <!-- Populated dynamically -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- SUB-TAB 2: WORKER INSURANCE REGISTRY -->
+          <div id="subtab-content-welfare-ins" style="display: none;">
+            
+            <!-- Insurance Approaching Expiry Alert Banner -->
+            <div class="insurance-alert-banner" id="insurance-expiry-alert">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="width: 38px; height: 38px; border-radius: 10px; background: var(--warning-amber); color: #FFFFFF; display: flex; align-items: center; justify-content: center;">
+                  <i data-lucide="alert-triangle" style="width: 20px; height: 20px;"></i>
+                </div>
+                <div>
+                  <h4 style="font-size: 14px; font-weight: 800; color: #92400E;">Insurance Renewal Notice: 2 Policies Expiring Soon</h4>
+                  <p style="font-size: 12px; color: #78350F;">Arjun Prasad (#701) and Mohammed Rizwan (#702) have group insurance policies expiring within 30 days. Renew immediately to maintain accident coverage.</p>
+                </div>
+              </div>
+              <button class="table-btn-action" style="background: var(--warning-amber); color: #FFFFFF; border-color: var(--warning-amber);" onclick="window.adminApp.renewExpiringInsurance()">
+                <span>Bulk Renew Group Policies</span>
+              </button>
+            </div>
+
+            <!-- Insurance Controls Toolbar -->
+            <div class="table-filter-toolbar">
+              <div class="filter-left-pills" id="insurance-status-filter-pills">
+                <button class="filter-pill-btn active" data-status="ALL" onclick="window.adminApp.filterInsuranceStatus('ALL')">
+                  <span>All Policies</span>
+                </button>
+                <button class="filter-pill-btn" data-status="Active" onclick="window.adminApp.filterInsuranceStatus('Active')">
+                  <span>Active</span>
+                </button>
+                <button class="filter-pill-btn" data-status="Expiring Soon" onclick="window.adminApp.filterInsuranceStatus('Expiring Soon')">
+                  <span>Expiring Soon</span>
+                  <span class="nav-badge amber">2</span>
+                </button>
+                <button class="filter-pill-btn" data-status="Claim Submitted" onclick="window.adminApp.filterInsuranceStatus('Claim Submitted')">
+                  <span>Claim Submitted</span>
+                  <span class="nav-badge blue">1</span>
+                </button>
+                <button class="filter-pill-btn" data-status="Claim Approved" onclick="window.adminApp.filterInsuranceStatus('Claim Approved')">
+                  <span>Claim Approved</span>
+                </button>
+              </div>
+
+              <div class="filter-right-search">
+                <div class="search-input-box">
+                  <i data-lucide="search" style="width: 15px; height: 15px;"></i>
+                  <input type="text" id="ins-search-input" placeholder="Search Policy No or Worker..." oninput="window.adminApp.filterInsuranceTable()">
+                </div>
+                <button class="table-btn-action" onclick="window.adminApp.openRecordClaimModal()">
+                  <i data-lucide="file-plus" style="width: 14px; height: 14px;"></i>
+                  <span>Record Claim</span>
+                </button>
+                <button class="table-btn-action primary" onclick="window.adminApp.openAddInsuranceModal()">
+                  <i data-lucide="plus" style="width: 14px; height: 14px;"></i>
+                  <span>Add Policy</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Insurance Registry Table -->
+            <div class="data-table-container">
+              <div class="table-responsive-wrapper">
+                <table class="admin-data-table">
+                  <thead>
+                    <tr>
+                      <th>Worker Name</th>
+                      <th>Worker ID</th>
+                      <th>Insurance Provider</th>
+                      <th>Policy Number</th>
+                      <th>Coverage Plan</th>
+                      <th>Start Date</th>
+                      <th>Expiry Date</th>
+                      <th>Status</th>
+                      <th>Admin Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="insurance-table-tbody">
+                    <!-- Populated dynamically -->
+                  </tbody>
+                </table>
+              </div>
+              <div class="table-pagination-footer">
+                <span>100% Cooperative Group Medical & Accidental Dismemberment Protection Scheme</span>
+              </div>
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- ==============================================================
+             MODULE 7: COMMUNICATION & MESSAGES (CUSTOMER + ADMIN + WORKER)
+        ============================================================== -->
+        <section id="view-messages" class="view-section">
+
+          <div class="chat-layout-split">
+            
+            <!-- Left Sidebar: Conversations Directory -->
+            <div class="chat-sidebar-conversations">
+              <div class="chat-sidebar-header">
+                <h3>Dispatch Conversations</h3>
+                <span class="nav-badge blue" id="chat-total-unread-badge">3 New</span>
+              </div>
+
+              <div style="padding: 10px 14px; border-bottom: 1px solid var(--border-subtle);">
+                <div class="search-input-box" style="width: 100%;">
+                  <i data-lucide="search" style="width: 14px; height: 14px;"></i>
+                  <input type="text" id="chat-search-input" placeholder="Search messages..." oninput="window.adminApp.filterChatConversations()">
+                </div>
+              </div>
+
+              <div class="chat-conversations-list" id="chat-conversations-list">
+                <!-- Rendered dynamically -->
+              </div>
+            </div>
+
+            <!-- Right Main: Active Chat Window -->
+            <div class="chat-main-container">
+              
+              <!-- Chat Active Header -->
+              <div class="chat-main-header">
+                <div class="chat-header-user">
+                  <div class="table-avatar-img" id="chat-active-avatar" style="width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; background: var(--primary-blue-light); color: var(--primary-blue); font-weight: 800;">
+                    PV
+                  </div>
+                  <div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      <h4 style="font-size: 14.5px; font-weight: 800; color: var(--text-main);" id="chat-active-name">P. Vishnu Vardhan</h4>
+                      <span class="status-pill under-review" id="chat-active-type-pill">Customer</span>
+                      <span class="table-booking-id" id="chat-active-booking-tag">CP-9104</span>
+                    </div>
+                    <span style="font-size: 11.5px; color: var(--text-muted);" id="chat-active-phone">+91 98480 22338 • Indiranagar 100ft Rd</span>
+                  </div>
+                </div>
+
+                <div class="chat-header-actions">
+                  <button class="table-btn-action" style="background: var(--primary-green-light); color: var(--primary-green); border-color: var(--primary-green-subtle);" onclick="window.adminApp.openPreCallModal(window.adminApp.currentChatPartyType || 'customer')">
+                    <i data-lucide="phone-call" style="width: 14px; height: 14px;"></i>
+                    <span>Call Support</span>
+                  </button>
+                  <button class="table-btn-action" onclick="window.adminApp.openAppointmentDetails(document.getElementById('chat-active-booking-tag').textContent)">
+                    <i data-lucide="external-link" style="width: 14px; height: 14px;"></i>
+                    <span>View Booking</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Message Stream -->
+              <div class="chat-messages-scroll" id="chat-messages-scroll">
+                <!-- Rendered dynamically -->
+              </div>
+
+              <!-- Quick Response Shortcuts -->
+              <div class="chat-quick-actions-bar">
+                <span style="font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Quick Dispatch Templates:</span>
+                <button class="quick-action-chip" onclick="window.adminApp.insertQuickMessage('booking_info')">
+                  <i data-lucide="tag" style="width: 12px; height: 12px;"></i>
+                  <span>Send Booking Details</span>
+                </button>
+                <button class="quick-action-chip" onclick="window.adminApp.insertQuickMessage('service_info')">
+                  <i data-lucide="shield-check" style="width: 12px; height: 12px;"></i>
+                  <span>Send 30-Day Warranty Info</span>
+                </button>
+                <button class="quick-action-chip" onclick="window.adminApp.insertQuickMessage('support_instructions')">
+                  <i data-lucide="help-circle" style="width: 12px; height: 12px;"></i>
+                  <span>Send Support Instructions</span>
+                </button>
+              </div>
+
+              <!-- Chat Input Form -->
+              <form class="chat-input-row" onsubmit="event.preventDefault(); window.adminApp.sendChatMessage();">
+                <input type="text" id="chat-input-field" class="chat-text-box" placeholder="Type official cooperative response or support instructions..." required autocomplete="off">
+                <button type="submit" class="btn-send-message" title="Send Message">
+                  <i data-lucide="send" style="width: 17px; height: 17px;"></i>
+                </button>
+              </form>
+
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- ==============================================================
+             MODULE 8: PAYMENT MONITORING & TRANSPARENT LEDGER
+        ============================================================== -->
+        <section id="view-payments" class="view-section">
+
+          <!-- Payments Summary Metrics -->
+          <div class="dashboard-metrics-grid" style="margin-bottom: 20px;">
+            <div class="metric-card">
+              <div class="metric-card-header">
+                <span class="metric-title">Total Service Value</span>
+                <div class="metric-icon-wrap blue"><i data-lucide="indian-rupee" style="width: 18px; height: 18px;"></i></div>
+              </div>
+              <div class="metric-main-value" id="pay-total-volume">₹48,650</div>
+              <div class="metric-sub-pills">
+                <span class="sub-pill green-text">100% Settled via UPI & Direct Relay</span>
+              </div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-card-header">
+                <span class="metric-title">Worker Direct Share (85%)</span>
+                <div class="metric-icon-wrap green"><i data-lucide="wallet" style="width: 18px; height: 18px;"></i></div>
+              </div>
+              <div class="metric-main-value" id="pay-worker-payouts">₹41,352.50</div>
+              <div class="metric-sub-pills">
+                <span class="sub-pill green-text">Zero middleman cut deducted</span>
+              </div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-card-header">
+                <span class="metric-title">Co-op Welfare Pool (15%)</span>
+                <div class="metric-icon-wrap amber"><i data-lucide="building-2" style="width: 18px; height: 18px;"></i></div>
+              </div>
+              <div class="metric-main-value" id="pay-coop-reserve">₹7,297.50</div>
+              <div class="metric-sub-pills">
+                <span class="sub-pill blue-text">Cooperative reserves & tooling</span>
+              </div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-card-header">
+                <span class="metric-title">Patronage Dividend Reserve</span>
+                <div class="metric-icon-wrap purple"><i data-lucide="gift" style="width: 18px; height: 18px;"></i></div>
+              </div>
+              <div class="metric-main-value">₹1,780.00</div>
+              <div class="metric-sub-pills">
+                <span class="sub-pill">Customer annual profit bonus</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Payments Filters & Search -->
+          <div class="table-filter-toolbar">
+            <div class="filter-left-pills" id="payment-date-filter-pills">
+              <button class="filter-pill-btn active" data-range="TODAY" onclick="window.adminApp.filterPaymentsRange('TODAY')">
+                <span>Today</span>
+              </button>
+              <button class="filter-pill-btn" data-range="WEEK" onclick="window.adminApp.filterPaymentsRange('WEEK')">
+                <span>This Week</span>
+              </button>
+              <button class="filter-pill-btn" data-range="MONTH" onclick="window.adminApp.filterPaymentsRange('MONTH')">
+                <span>This Month</span>
+              </button>
+              <button class="filter-pill-btn" data-range="ALL" onclick="window.adminApp.filterPaymentsRange('ALL')">
+                <span>All History</span>
+              </button>
+            </div>
+
+            <div class="filter-right-search">
+              <select class="custom-select" id="payment-status-select" onchange="window.adminApp.filterPaymentsTable()">
+                <option value="ALL">All Payment Statuses</option>
+                <option value="Paid">Paid / Settled</option>
+                <option value="Pending">Pending Settlement</option>
+                <option value="Failed">Failed</option>
+                <option value="Refunded">Refunded</option>
+              </select>
+
+              <div class="search-input-box">
+                <i data-lucide="search" style="width: 15px; height: 15px;"></i>
+                <input type="text" id="payment-search-input" placeholder="Search Booking ID or Customer..." oninput="window.adminApp.filterPaymentsTable()">
+              </div>
+            </div>
+          </div>
+
+          <!-- Payments Ledger Table -->
+          <div class="data-table-container">
+            <div class="table-responsive-wrapper">
+              <table class="admin-data-table">
+                <thead>
+                  <tr>
+                    <th>Booking ID</th>
+                    <th>Customer</th>
+                    <th>Worker</th>
+                    <th>Service</th>
+                    <th>Total Amount</th>
+                    <th>Worker Direct (85%)</th>
+                    <th>Co-op Share (15%)</th>
+                    <th>Payment Status</th>
+                    <th>Date & Time</th>
+                    <th>Settlement Method</th>
+                  </tr>
+                </thead>
+                <tbody id="payments-table-tbody">
+                  <!-- Populated dynamically -->
+                </tbody>
+              </table>
+            </div>
+            <div class="table-pagination-footer">
+              <span>Cooperative statutory audit trail with 100% transparent zero-commission ledger</span>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ==============================================================
+             MODULE 10: AI DEMAND FORECAST & WORKFORCE PLANNING (PART 3)
+        ============================================================== -->
+        <section id="view-forecast" class="view-section">
+
+          <!-- SUB-TABS NAVIGATION -->
+          <div class="view-subtabs-bar">
+            <button class="subtab-btn active" id="subtab-btn-fc-demand" onclick="window.adminApp.switchForecastSubtab('demand')">
+              <i data-lucide="trending-up" style="width: 15px; height: 15px;"></i>
+              <span>AI Demand Forecast</span>
+            </button>
+            <button class="subtab-btn" id="subtab-btn-fc-planning" onclick="window.adminApp.switchForecastSubtab('planning')">
+              <i data-lucide="calendar-check" style="width: 15px; height: 15px;"></i>
+              <span>Workforce Gap &amp; Planning</span>
+            </button>
+          </div>
+
+          <!-- SUBTAB 1: AI DEMAND FORECAST -->
+          <div id="subtab-content-fc-demand">
+
+            <!-- AI FORECAST DISCLAIMER & CONFIDENCE BANNER (Prompt Compliance) -->
+            <div class="forecast-disclaimer-banner">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="width: 40px; height: 40px; border-radius: 10px; background: var(--primary-blue); color: #FFFFFF; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                  <i data-lucide="sparkles" style="width: 22px; height: 22px;"></i>
+                </div>
+                <div>
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <span class="ai-forecast-chip">AI Forecast Model</span>
+                    <span class="ai-confidence-pill">Overall Model Accuracy: 84%</span>
+                  </div>
+                  <div style="font-size: 13px; color: var(--text-main); margin-top: 3px; font-weight: 600;">
+                    Predictive Demand Engine analyzing 14-month historical bookings, weather indices, day/time clusters, and artisan density.
+                  </div>
+                  <div style="font-size: 11.5px; color: var(--text-muted); margin-top: 2px;">
+                    ⚠️ <em>Notice: Predicted demand models provide administrator decision support and do not guarantee future outcomes.</em>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <button class="table-btn-action primary" onclick="window.adminApp.recalculateAIForecast()">
+                  <i data-lucide="refresh-cw" style="width: 13px; height: 13px;"></i>
+                  <span>Re-run Forecast Model</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- NEXT 7 DAYS DEMAND FORECAST CARDS -->
+            <div style="margin-bottom: 22px;">
+              <h3 style="font-size: 16px; font-weight: 800; color: var(--text-main); margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                <span>Next 7 Days Demand Projections</span>
+                <span class="status-pill approved" style="font-size: 11px;">24 Sep – 30 Sep 2026</span>
+              </h3>
+
+              <div class="allocation-candidates-grid" id="forecast-trade-cards-container">
+                <!-- Rendered dynamically -->
+              </div>
+            </div>
+
+            <!-- 7-DAY DEMAND VISUALIZER & LOCATION FORECAST -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px;">
+
+              <!-- SVG Demand Projection Curve -->
+              <div class="card-panel" style="margin-bottom: 0;">
+                <div class="card-panel-header">
+                  <h3>7-Day Projected Service Volume Curve</h3>
+                  <span class="badge-tag">Plumbing &amp; Cleaning Surges</span>
+                </div>
+
+                <div style="height: 220px; width: 100%; display: flex; align-items: center; justify-content: center; position: relative;">
+                  <svg viewBox="0 0 500 200" style="width: 100%; height: 100%; overflow: visible;">
+                    <defs>
+                      <linearGradient id="gradForecast" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stop-color="#1D4ED8" stop-opacity="0.25"/>
+                        <stop offset="100%" stop-color="#1D4ED8" stop-opacity="0.0"/>
+                      </linearGradient>
+                    </defs>
+                    <!-- Grid Lines -->
+                    <line x1="40" y1="30" x2="480" y2="30" stroke="#E2E8F0" stroke-width="1" stroke-dasharray="3,3"/>
+                    <line x1="40" y1="80" x2="480" y2="80" stroke="#E2E8F0" stroke-width="1" stroke-dasharray="3,3"/>
+                    <line x1="40" y1="130" x2="480" y2="130" stroke="#E2E8F0" stroke-width="1" stroke-dasharray="3,3"/>
+                    <line x1="40" y1="170" x2="480" y2="170" stroke="#CBD5E1" stroke-width="1.5"/>
+
+                    <!-- Area Under Curve -->
+                    <path d="M 50 140 Q 120 70, 190 90 T 330 45 T 470 120 L 470 170 L 50 170 Z" fill="url(#gradForecast)"/>
+
+                    <!-- Curve Line -->
+                    <path d="M 50 140 Q 120 70, 190 90 T 330 45 T 470 120" fill="none" stroke="#1D4ED8" stroke-width="3" stroke-linecap="round"/>
+
+                    <!-- Data Nodes -->
+                    <circle cx="50" cy="140" r="5" fill="#1D4ED8" stroke="#FFFFFF" stroke-width="2"/>
+                    <text x="50" y="190" font-size="11" fill="#64748B" text-anchor="middle">Thu 24</text>
+
+                    <circle cx="120" cy="85" r="5" fill="#1D4ED8" stroke="#FFFFFF" stroke-width="2"/>
+                    <text x="120" y="190" font-size="11" fill="#64748B" text-anchor="middle">Fri 25</text>
+
+                    <circle cx="190" cy="90" r="5" fill="#1D4ED8" stroke="#FFFFFF" stroke-width="2"/>
+                    <text x="190" y="190" font-size="11" fill="#64748B" text-anchor="middle">Sat 26</text>
+
+                    <circle cx="260" cy="65" r="5" fill="#DC2626" stroke="#FFFFFF" stroke-width="2"/>
+                    <text x="260" y="190" font-size="11" fill="#DC2626" font-weight="700" text-anchor="middle">Sun 27 (Peak)</text>
+
+                    <circle cx="330" cy="45" r="6" fill="#DC2626" stroke="#FFFFFF" stroke-width="2"/>
+                    <text x="330" y="190" font-size="11" fill="#64748B" text-anchor="middle">Mon 28</text>
+
+                    <circle cx="400" cy="80" r="5" fill="#1D4ED8" stroke="#FFFFFF" stroke-width="2"/>
+                    <text x="400" y="190" font-size="11" fill="#64748B" text-anchor="middle">Tue 29</text>
+
+                    <circle cx="470" cy="120" r="5" fill="#1D4ED8" stroke="#FFFFFF" stroke-width="2"/>
+                    <text x="470" y="190" font-size="11" fill="#64748B" text-anchor="middle">Wed 30</text>
+                  </svg>
+                </div>
+              </div>
+
+              <!-- Location Forecast (Demand by Service Area) -->
+              <div class="card-panel" style="margin-bottom: 0;">
+                <div class="card-panel-header">
+                  <h3>Location Demand Matrix by Sector</h3>
+                  <span class="badge-tag">Service Areas</span>
+                </div>
+
+                <div id="location-forecast-container">
+                  <!-- Rendered dynamically -->
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+          <!-- SUBTAB 2: WORKFORCE GAP & PLANNING -->
+          <div id="subtab-content-fc-planning" style="display: none;">
+
+            <!-- WORKFORCE GAP ANALYSIS TABLE (Prompt Requirement) -->
+            <div class="card-panel">
+              <div class="card-panel-header">
+                <div>
+                  <h3>Workforce Gap &amp; Capacity Deficit Analysis</h3>
+                  <p style="font-size: 12.5px; color: var(--text-muted); margin-top: 2px;">
+                    Calculates variance between predicted service demand and current registered artisan availability.
+                  </p>
+                </div>
+                <button class="table-btn-action primary" onclick="window.adminApp.executeRecommendedAllocation()">
+                  <i data-lucide="zap" style="width: 14px; height: 14px;"></i>
+                  <span>Auto-Balance Staffing</span>
+                </button>
+              </div>
+
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Service Division</th>
+                      <th>Expected Jobs</th>
+                      <th>Available Workers</th>
+                      <th>Required Workers</th>
+                      <th>Workforce Gap</th>
+                      <th>Staffing Advisory Notice</th>
+                      <th>Admin Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="workforce-gap-tbody">
+                    <!-- Rendered dynamically -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- WORKFORCE PLANNING CONTROLS -->
+            <div class="planning-card">
+              <h3 style="font-size: 15.5px; font-weight: 800; color: var(--text-main); margin-bottom: 6px;">
+                Administrator Workforce Planning Controls
+              </h3>
+              <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 16px;">
+                Adjust cooperative operational levers to increase coverage, re-cluster artisan zones, and mobilize emergency reserves.
+              </p>
+
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px;">
+                
+                <div style="background: #F8FAFC; border: 1px solid var(--border-light); border-radius: var(--radius-sm); padding: 14px;">
+                  <h4 style="font-size: 13.5px; font-weight: 700; color: var(--text-main); margin-bottom: 4px;">Increase Worker Availability</h4>
+                  <p style="font-size: 11.5px; color: var(--text-muted); margin-bottom: 12px;">Shift standby and off-duty registered members into the active dispatch queue.</p>
+                  <button class="table-btn-action primary" onclick="window.adminApp.mobilizeStandbyWorkers()">
+                    <i data-lucide="user-plus" style="width: 13px; height: 13px;"></i>
+                    <span>Activate 8 Standby Artisans</span>
+                  </button>
+                </div>
+
+                <div style="background: #F8FAFC; border: 1px solid var(--border-light); border-radius: var(--radius-sm); padding: 14px;">
+                  <h4 style="font-size: 13.5px; font-weight: 700; color: var(--text-main); margin-bottom: 4px;">Assign Service Areas</h4>
+                  <p style="font-size: 11.5px; color: var(--text-muted); margin-bottom: 12px;">Re-cluster Domlur and HAL artisans into high-demand Indiranagar zone.</p>
+                  <button class="table-btn-action" onclick="window.adminApp.reclusterServiceAreas()">
+                    <i data-lucide="map" style="width: 13px; height: 13px;"></i>
+                    <span>Re-cluster to Indiranagar</span>
+                  </button>
+                </div>
+
+                <div style="background: #F8FAFC; border: 1px solid var(--border-light); border-radius: var(--radius-sm); padding: 14px;">
+                  <h4 style="font-size: 13.5px; font-weight: 700; color: var(--text-main); margin-bottom: 4px;">Plan Shift Rotations</h4>
+                  <p style="font-size: 11.5px; color: var(--text-muted); margin-bottom: 12px;">Manage Morning, Afternoon, and Night emergency coverage blocks.</p>
+                  <button class="table-btn-action" onclick="window.adminApp.openShiftPlanningModal()">
+                    <i data-lucide="clock" style="width: 13px; height: 13px;"></i>
+                    <span>Configure Shifts</span>
+                  </button>
+                </div>
+
+                <div style="background: #F8FAFC; border: 1px solid var(--border-light); border-radius: var(--radius-sm); padding: 14px;">
+                  <h4 style="font-size: 13.5px; font-weight: 700; color: var(--text-main); margin-bottom: 4px;">Increase Emergency Coverage</h4>
+                  <p style="font-size: 11.5px; color: var(--text-muted); margin-bottom: 12px;">Authorize monsoon standby bonus for 24x7 pipe burst response.</p>
+                  <button class="table-btn-action" style="background: #FEF2F2; color: var(--emergency-red); border: 1px solid #FECACA;" onclick="window.adminApp.increaseEmergencyCoverage()">
+                    <i data-lucide="siren" style="width: 13px; height: 13px;"></i>
+                    <span>Expand SOS Reserve (+10)</span>
+                  </button>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+
+        </section>
+
+        <!-- ==============================================================
+             MODULE 11: STATUTORY COOPERATIVE AUDIT & REPORTS (PART 3)
+        ============================================================== -->
+        <section id="view-reports" class="view-section">
+
+          <!-- 12 REPORTS SELECTOR GRID (Prompt Requirement) -->
+          <div style="margin-bottom: 16px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+              <div>
+                <h3 style="font-size: 16px; font-weight: 800; color: var(--text-main);">Cooperative Society Audit &amp; Operations Reports</h3>
+                <span style="font-size: 12px; color: var(--text-muted);">12 Statutory &amp; Operational Reports ready for Registrar verification and cooperative analytics.</span>
+              </div>
+              <div style="display: flex; gap: 8px;">
+                <button class="table-btn-action" onclick="window.adminApp.exportReportCSV()" title="Export CSV Spreadsheet">
+                  <i data-lucide="download" style="width: 13px; height: 13px;"></i>
+                  <span>Export CSV</span>
+                </button>
+                <button class="table-btn-action primary" onclick="window.adminApp.printReportPDF()" title="Print Statutory Audit Report">
+                  <i data-lucide="printer" style="width: 13px; height: 13px;"></i>
+                  <span>Print Audit PDF</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="report-nav-tabs-grid" id="report-tabs-selector">
+              <button class="report-tab-btn active" data-report="worker-perf" onclick="window.adminApp.selectReport('worker-perf')">
+                <i data-lucide="award" style="width: 15px; height: 15px;"></i>
+                <span>1. Worker Performance</span>
+              </button>
+              <button class="report-tab-btn" data-report="cust-bookings" onclick="window.adminApp.selectReport('cust-bookings')">
+                <i data-lucide="calendar" style="width: 15px; height: 15px;"></i>
+                <span>2. Customer Bookings</span>
+              </button>
+              <button class="report-tab-btn" data-report="svc-demand" onclick="window.adminApp.selectReport('svc-demand')">
+                <i data-lucide="trending-up" style="width: 15px; height: 15px;"></i>
+                <span>3. Service Demand</span>
+              </button>
+              <button class="report-tab-btn" data-report="revenue" onclick="window.adminApp.selectReport('revenue')">
+                <i data-lucide="dollar-sign" style="width: 15px; height: 15px;"></i>
+                <span>4. Revenue &amp; Margin</span>
+              </button>
+              <button class="report-tab-btn" data-report="materials" onclick="window.adminApp.selectReport('materials')">
+                <i data-lucide="package" style="width: 15px; height: 15px;"></i>
+                <span>5. Material Costs</span>
+              </button>
+              <button class="report-tab-btn" data-report="monthly-rates" onclick="window.adminApp.selectReport('monthly-rates')">
+                <i data-lucide="sliders" style="width: 15px; height: 15px;"></i>
+                <span>6. Rate Changes</span>
+              </button>
+              <button class="report-tab-btn" data-report="welfare" onclick="window.adminApp.selectReport('welfare')">
+                <i data-lucide="heart-handshake" style="width: 15px; height: 15px;"></i>
+                <span>7. Welfare Support</span>
+              </button>
+              <button class="report-tab-btn" data-report="insurance" onclick="window.adminApp.selectReport('insurance')">
+                <i data-lucide="shield" style="width: 15px; height: 15px;"></i>
+                <span>8. Insurance Status</span>
+              </button>
+              <button class="report-tab-btn" data-report="workforce-alloc" onclick="window.adminApp.selectReport('workforce-alloc')">
+                <i data-lucide="user-check" style="width: 15px; height: 15px;"></i>
+                <span>9. Allocation Quality</span>
+              </button>
+              <button class="report-tab-btn" data-report="emergency" onclick="window.adminApp.selectReport('emergency')">
+                <i data-lucide="siren" style="width: 15px; height: 15px;"></i>
+                <span>10. Emergency Requests</span>
+              </button>
+              <button class="report-tab-btn" data-report="complaints" onclick="window.adminApp.selectReport('complaints')">
+                <i data-lucide="alert-circle" style="width: 15px; height: 15px;"></i>
+                <span>11. Complaints &amp; SLA</span>
+              </button>
+              <button class="report-tab-btn" data-report="payments" onclick="window.adminApp.selectReport('payments')">
+                <i data-lucide="credit-card" style="width: 15px; height: 15px;"></i>
+                <span>12. Payment Reports</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Report Filter Toolbar -->
+          <div style="background: #FFFFFF; border: 1px solid var(--border-light); border-radius: var(--radius-sm); padding: 12px 16px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+              <span style="font-weight: 700; font-size: 12.5px; color: var(--text-main);">Report Filters:</span>
+
+              <div>
+                <label style="font-size: 11px; color: var(--text-muted); display: block;">Date Range:</label>
+                <select id="report-filter-date" class="input-field" style="width: 150px; padding: 5px 10px; font-size: 12px;" onchange="window.adminApp.applyReportFilters()">
+                  <option value="Today">Today (23 Sep)</option>
+                  <option value="This Week">This Week</option>
+                  <option value="This Month" selected>This Month (Sep 2026)</option>
+                  <option value="Last Quarter">Last Quarter</option>
+                  <option value="All Time">All Time</option>
+                </select>
+              </div>
+
+              <div>
+                <label style="font-size: 11px; color: var(--text-muted); display: block;">Service Trade:</label>
+                <select id="report-filter-trade" class="input-field" style="width: 160px; padding: 5px 10px; font-size: 12px;" onchange="window.adminApp.applyReportFilters()">
+                  <option value="ALL">All Trade Divisions</option>
+                  <option value="Plumbing">Plumbing</option>
+                  <option value="Electrical">Electrical</option>
+                  <option value="Carpentry">Carpentry</option>
+                  <option value="Painting">Painting</option>
+                  <option value="Cleaning">Cleaning</option>
+                  <option value="Appliance Repair">Appliance Repair</option>
+                </select>
+              </div>
+
+              <div>
+                <label style="font-size: 11px; color: var(--text-muted); display: block;">Location / Sector:</label>
+                <select id="report-filter-location" class="input-field" style="width: 170px; padding: 5px 10px; font-size: 12px;" onchange="window.adminApp.applyReportFilters()">
+                  <option value="ALL">All Bengaluru Zones</option>
+                  <option value="Indiranagar">Indiranagar &amp; Domlur</option>
+                  <option value="Koramangala">Koramangala &amp; HSR</option>
+                  <option value="HAL">HAL &amp; Whitefield</option>
+                  <option value="Jayanagar">Jayanagar &amp; JP Nagar</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <span id="report-status-meta" style="font-size: 11.5px; color: var(--primary-green-dark); font-weight: 700;">✓ Real-time Ledger Certified</span>
+            </div>
+          </div>
+
+          <!-- Dynamic Report Content Card -->
+          <div class="card-panel" id="report-active-container">
+            <!-- Header, KPI strip, SVG chart, and Table rendered dynamically -->
+          </div>
+
+        </section>
+
+        <section id="view-settings" class="view-section">
+          <div class="card-panel">
+            <div class="card-panel-header">
+              <h3>Cooperative Society Configuration</h3>
+              <span class="nav-badge">Part 3 Module Ready</span>
+            </div>
+            <p style="color: var(--text-muted);">
+              Configure cooperative registration parameters, emergency dispatch radiuses, warranty terms, and admin roles.
+            </p>
+          </div>
+        </section>
+
+      </main>
+
+    </div>
+  </div>
+
+
+  <!-- ==============================================================
+       DRAWERS & MODALS
+  ============================================================== -->
+
+  <!-- 1. WORKER DETAILS & SKILL MANAGEMENT DRAWER -->
+  <div class="drawer-overlay" id="drawer-worker-details" onclick="if(event.target===this) window.adminApp.closeDrawer('drawer-worker-details')">
+    <div class="drawer-container">
+      <div class="drawer-header">
+        <div class="drawer-header-title">
+          <div class="table-avatar-img" id="wd-avatar-wrap" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: var(--primary-blue-light); color: var(--primary-blue); font-weight: 800; font-size: 16px;">
+            RK
+          </div>
+          <div>
+            <h3 id="wd-name">Ramesh Kumar</h3>
+            <span id="wd-meta-id" style="font-size: 12px; color: var(--text-muted);">Worker ID: #402 • Plumbing Specialist</span>
+          </div>
+        </div>
+        <button class="btn-drawer-close" onclick="window.adminApp.closeDrawer('drawer-worker-details')">
+          <i data-lucide="x" style="width: 18px; height: 18px;"></i>
+        </button>
+      </div>
+
+      <div class="drawer-body">
+
+        <!-- Verification Banner in Drawer -->
+        <div style="background: var(--bg-subtle); border-radius: var(--radius-md); padding: 14px 18px; display: flex; align-items: center; justify-content: space-between;">
+          <div>
+            <span style="font-size: 11px; text-transform: uppercase; font-weight: 800; color: var(--text-muted);">Current Verification Status</span>
+            <div style="margin-top: 4px;">
+              <span class="status-pill approved" id="wd-status-pill">Approved</span>
+            </div>
+          </div>
+          <div style="text-align: right;">
+            <span style="font-size: 11px; text-transform: uppercase; font-weight: 800; color: var(--text-muted);">Eligibility</span>
+            <div id="wd-eligibility-text" style="font-size: 13px; font-weight: 700; color: var(--primary-green); margin-top: 4px;">
+              Eligible for Customer Dispatches
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 1: Personal Details -->
+        <div class="details-section-card">
+          <h4 class="details-section-title"><i data-lucide="user" style="width: 14px; height: 14px;"></i> Personal Details</h4>
+          <div class="details-kv-grid">
+            <div class="kv-item"><label>Full Name</label><span id="wd-full-name">Ramesh Kumar</span></div>
+            <div class="kv-item"><label>Mobile Number</label><span id="wd-mobile">+91 98450 40201</span></div>
+            <div class="kv-item"><label>Email Address</label><span id="wd-email">ramesh.kumar@coopguild.org</span></div>
+            <div class="kv-item"><label>Residential Address</label><span id="wd-address">#42, 6th Cross, Indiranagar, Bengaluru</span></div>
+          </div>
+        </div>
+
+        <!-- Section 2: Worker Skill Management Editor -->
+        <div class="details-section-card">
+          <h4 class="details-section-title"><i data-lucide="wrench" style="width: 14px; height: 14px;"></i> Worker Skill Management</h4>
+          
+          <form id="form-worker-skills" onsubmit="event.preventDefault(); window.adminApp.saveWorkerSkills();">
+            <div class="form-group" style="margin-bottom: 12px;">
+              <label>Primary Skill</label>
+              <select id="wd-edit-primary-skill" class="input-field" style="padding-left: 14px;">
+                <option value="Plumbing">Plumbing</option>
+                <option value="Electrical">Electrical</option>
+                <option value="Carpentry">Carpentry</option>
+                <option value="Painting">Painting</option>
+                <option value="Cleaning">Cleaning</option>
+                <option value="Appliance Repair">Appliance Repair</option>
+                <option value="Other">Other Services</option>
+              </select>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 12px;">
+              <label>Secondary Skills (Comma Separated)</label>
+              <input type="text" id="wd-edit-secondary-skills" class="input-field" style="padding-left: 14px;" value="Pipe Repair, Water Pump Repair, Flush Valve Fix">
+            </div>
+
+            <div class="details-kv-grid" style="margin-bottom: 12px;">
+              <div class="form-group">
+                <label>Experience Bracket</label>
+                <input type="text" id="wd-edit-experience" class="input-field" style="padding-left: 14px;" value="6-10 years">
+              </div>
+              <div class="form-group">
+                <label>Max Daily Jobs Limit</label>
+                <input type="number" id="wd-edit-max-jobs" class="input-field" style="padding-left: 14px;" value="5" min="1" max="10">
+              </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 12px;">
+              <label>Service Area Sectors</label>
+              <input type="text" id="wd-edit-service-area" class="input-field" style="padding-left: 14px;" value="Indiranagar, Domlur, HAL">
+            </div>
+
+            <div class="details-kv-grid" style="margin-bottom: 14px;">
+              <div class="form-group">
+                <label>Emergency Availability</label>
+                <select id="wd-edit-emergency-ready" class="input-field" style="padding-left: 14px;">
+                  <option value="Available">Available for Emergency SOS</option>
+                  <option value="Standby">Standby Reserve</option>
+                  <option value="Unavailable">Not Available for Emergency</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Live General Availability</label>
+                <select id="wd-edit-general-avail" class="input-field" style="padding-left: 14px;">
+                  <option value="Online">Online • Active Receiving</option>
+                  <option value="Offline">Offline • Paused</option>
+                </select>
+              </div>
+            </div>
+
+            <button type="submit" class="table-btn-action primary" style="width: 100%; height: 38px; justify-content: center;">
+              <i data-lucide="save" style="width: 14px; height: 14px;"></i>
+              <span>Save Skill & Dispatch Settings</span>
+            </button>
+          </form>
+        </div>
+
+        <!-- Section 3: Government ID & Trade Certificate -->
+        <div class="details-section-card">
+          <h4 class="details-section-title"><i data-lucide="file-badge" style="width: 14px; height: 14px;"></i> Government ID & Trade Certificate</h4>
+          
+          <div class="doc-preview-card">
+            <div class="doc-info-left">
+              <div class="doc-icon-box"><i data-lucide="file-text" style="width: 18px; height: 18px;"></i></div>
+              <div>
+                <h5 style="font-size: 13px; font-weight: 700;">Aadhaar Verification</h5>
+                <span id="wd-aadhaar-num" style="font-size: 11px; color: var(--text-muted);">UID: XXXX-XXXX-4092 • DigiLocker Verified</span>
+              </div>
+            </div>
+            <span class="status-pill approved">Verified</span>
+          </div>
+
+          <div class="doc-preview-card">
+            <div class="doc-info-left">
+              <div class="doc-icon-box" style="background: var(--primary-green-light); color: var(--primary-green);"><i data-lucide="award" style="width: 18px; height: 18px;"></i></div>
+              <div>
+                <h5 style="font-size: 13px; font-weight: 700;">Skill Council Trade Certificate</h5>
+                <span id="wd-trade-cert" style="font-size: 11px; color: var(--text-muted);">National Skill Dev Corp (NSDC) - Level 4 Plumbing</span>
+              </div>
+            </div>
+            <span class="status-pill approved">Verified</span>
+          </div>
+        </div>
+
+        <!-- Section 4: Work History, Rating & Welfare -->
+        <div class="details-section-card">
+          <h4 class="details-section-title"><i data-lucide="shield-check" style="width: 14px; height: 14px;"></i> Performance & Welfare</h4>
+          <div class="details-kv-grid">
+            <div class="kv-item"><label>Customer Rating</label><span id="wd-rating" style="color: var(--warning-amber); font-weight: 800;">4.9 ★ (384 reviews)</span></div>
+            <div class="kv-item"><label>Completed Jobs</label><span id="wd-completed-jobs">384 Jobs</span></div>
+            <div class="kv-item"><label>Co-op Welfare Pool</label><span id="wd-welfare-status" style="color: var(--primary-green); font-weight: 700;">Active Contributor (₹4,200)</span></div>
+            <div class="kv-item"><label>Group Insurance Policy</label><span id="wd-insurance-status" style="color: var(--primary-blue); font-weight: 700;">Active • Policy #COOP-IN-402</span></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Action Buttons in Drawer -->
+      <div class="drawer-footer-actions">
+        <button class="table-btn-action" style="background: var(--primary-blue-light); color: var(--primary-blue); border-color: var(--primary-blue-subtle);" onclick="window.adminApp.openPreCallModal('worker')">
+          <i data-lucide="phone-call" style="width: 14px; height: 14px;"></i>
+          <span>Call Worker</span>
+        </button>
+        <button class="table-btn-action" style="color: var(--emergency-red); border-color: #FECACA;" onclick="window.adminApp.suspendWorkerCurrent()">
+          <i data-lucide="shield-alert" style="width: 14px; height: 14px;"></i>
+          <span>Suspend</span>
+        </button>
+        <button class="table-btn-action" onclick="window.adminApp.openModal('modal-worker-request-info')">
+          <i data-lucide="help-circle" style="width: 14px; height: 14px;"></i>
+          <span>Request Info</span>
+        </button>
+        <button class="table-btn-action" style="background: var(--emergency-red-light); color: var(--emergency-red); border-color: #FCA5A5;" onclick="window.adminApp.openModal('modal-worker-reject')">
+          <i data-lucide="user-x" style="width: 14px; height: 14px;"></i>
+          <span>Reject</span>
+        </button>
+        <button class="table-btn-action primary" style="background: var(--primary-green); border-color: var(--primary-green);" onclick="window.adminApp.approveWorkerCurrent()">
+          <i data-lucide="check" style="width: 14px; height: 14px;"></i>
+          <span>Approve Worker</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- 2. REJECT WORKER REASON MODAL -->
+  <div class="modal-overlay" id="modal-worker-reject">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>Reject Worker Application</h3>
+        <button class="btn-drawer-close" onclick="window.adminApp.closeModal('modal-worker-reject')">
+          <i data-lucide="x" style="width: 18px; height: 18px;"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 13px; color: var(--text-muted);">
+          Please enter the specific reason for rejection. This feedback will be sent to the worker app so they can update and resubmit their trade documents.
+        </p>
+        <div class="form-group">
+          <label>Rejection Reason</label>
+          <textarea id="reject-reason-input" class="input-field" style="height: 100px; padding: 10px;" placeholder="e.g. Government ID image blurry or Trade certificate verification mismatch."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="table-btn-action" onclick="window.adminApp.closeModal('modal-worker-reject')">Cancel</button>
+        <button class="table-btn-action" style="background: var(--emergency-red); color: #FFFFFF;" onclick="window.adminApp.confirmRejectWorker()">
+          <span>Confirm Rejection</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- 3. REQUEST MORE INFO MODAL -->
+  <div class="modal-overlay" id="modal-worker-request-info">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>Request More Information</h3>
+        <button class="btn-drawer-close" onclick="window.adminApp.closeModal('modal-worker-request-info')">
+          <i data-lucide="x" style="width: 18px; height: 18px;"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 13px; color: var(--text-muted);">
+          Send an SMS & in-app notification to the applicant requesting additional documentation or trade background.
+        </p>
+        <div class="form-group">
+          <label>Required Documents / Message</label>
+          <textarea id="request-info-input" class="input-field" style="height: 90px; padding: 10px;" placeholder="e.g. Please upload clear front and back photos of your electrical wireman license."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="table-btn-action" onclick="window.adminApp.closeModal('modal-worker-request-info')">Cancel</button>
+        <button class="table-btn-action primary" onclick="window.adminApp.sendWorkerInfoRequest()">
+          <span>Send Request</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- 4. APPOINTMENT DETAILS MODAL -->
+  <div class="modal-overlay" id="modal-appointment-details">
+    <div class="modal-box" style="max-width: 620px;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span class="table-booking-id" id="ad-booking-id">CP-9104</span>
+          <h3 id="ad-service-title">Plumbing Leakage & Pipe Repair</h3>
+        </div>
+        <button class="btn-drawer-close" onclick="window.adminApp.closeModal('modal-appointment-details')">
+          <i data-lucide="x" style="width: 18px; height: 18px;"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+
+        <!-- Status & Request Type Ribbon -->
+        <div style="display: flex; align-items: center; justify-content: space-between; background: var(--bg-subtle); padding: 12px 16px; border-radius: var(--radius-md);">
+          <div>
+            <span style="font-size: 11px; text-transform: uppercase; font-weight: 800; color: var(--text-muted);">Workflow Status</span>
+            <div style="margin-top: 3px;">
+              <span class="status-pill on-the-way" id="ad-status-pill">On the Way</span>
+            </div>
+          </div>
+          <div>
+            <span style="font-size: 11px; text-transform: uppercase; font-weight: 800; color: var(--text-muted);">Request Type</span>
+            <div style="margin-top: 3px;" id="ad-type-badge">
+              <span class="status-pill in-progress">⚡ INSTANT</span>
+            </div>
+          </div>
+          <div style="text-align: right;">
+            <span style="font-size: 11px; text-transform: uppercase; font-weight: 800; color: var(--text-muted);">Service Value</span>
+            <div id="ad-amount" style="font-size: 16px; font-weight: 800; color: var(--primary-blue); margin-top: 2px;">
+              ₹348.00
+            </div>
+          </div>
+        </div>
+
+        <!-- Timeline Progress Bar -->
+        <div style="padding: 12px 6px;">
+          <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; color: var(--text-muted); margin-bottom: 6px;">
+            <span>Requested</span>
+            <span>Assigned</span>
+            <span>On Way</span>
+            <span>Arrived</span>
+            <span>In Progress</span>
+            <span>Completed</span>
+          </div>
+          <div style="height: 6px; background: #E2E8F0; border-radius: var(--radius-full); overflow: hidden;">
+            <div id="ad-timeline-bar" style="width: 50%; height: 100%; background: var(--primary-blue); transition: width 0.3s ease;"></div>
+          </div>
+        </div>
+
+        <!-- Customer & Worker Pairing Box -->
+        <div class="details-kv-grid">
+          <div class="details-section-card">
+            <h5 style="font-size: 12px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px;">Customer Information</h5>
+            <div style="font-size: 14px; font-weight: 700;" id="ad-cust-name">P. Vishnu Vardhan</div>
+            <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;" id="ad-cust-phone">+91 98480 22338</div>
+            <div style="font-size: 12px; color: var(--text-body); margin-top: 6px;" id="ad-cust-location">Indiranagar 100ft Rd, Bengaluru</div>
+          </div>
+
+          <div class="details-section-card">
+            <h5 style="font-size: 12px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px;">Assigned Worker</h5>
+            <div style="font-size: 14px; font-weight: 700;" id="ad-worker-name">Ramesh Kumar (#402)</div>
+            <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;" id="ad-worker-phone">+91 98450 40201</div>
+            <div style="font-size: 12px; color: var(--primary-green); font-weight: 700; margin-top: 6px;" id="ad-worker-eta">ETA: 12 mins</div>
+          </div>
+        </div>
+
+        <div class="details-section-card">
+          <h5 style="font-size: 12px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px;">Reported Issue & Description</h5>
+          <p id="ad-problem-desc" style="font-size: 13px; color: var(--text-body);">
+            Tap & Mixer Leak • High pressure joint failure under main washbasin.
+          </p>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button class="table-btn-action" style="color: var(--emergency-red); border-color: #FECACA;" onclick="window.adminApp.openCancelModal(window.adminApp.currentSelectedBookingId)">
+          <i data-lucide="x-circle" style="width: 14px; height: 14px;"></i>
+          <span>Cancel Booking</span>
+        </button>
+        <button class="table-btn-action" onclick="window.adminApp.openRescheduleModal(window.adminApp.currentSelectedBookingId)">
+          <i data-lucide="calendar" style="width: 14px; height: 14px;"></i>
+          <span>Reschedule</span>
+        </button>
+        <button class="table-btn-action" onclick="window.adminApp.openAssignWorkerModal(window.adminApp.currentSelectedBookingId)">
+          <i data-lucide="user-plus" style="width: 14px; height: 14px;"></i>
+          <span>Reassign Worker</span>
+        </button>
+        <button class="table-btn-action primary" onclick="window.adminApp.closeModal('modal-appointment-details')">
+          <span>Done</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- 5. ASSIGN / REASSIGN WORKER MODAL -->
+  <div class="modal-overlay" id="modal-assign-worker">
+    <div class="modal-box" style="max-width: 580px;">
+      <div class="modal-header">
+        <div>
+          <h3>Assign Qualified Artisan</h3>
+          <span style="font-size: 12px; color: var(--text-muted);" id="assign-modal-booking-tag">Booking: CP-9104</span>
+        </div>
+        <button class="btn-drawer-close" onclick="window.adminApp.closeModal('modal-assign-worker')">
+          <i data-lucide="x" style="width: 18px; height: 18px;"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 13px; color: var(--text-muted);">
+          Select an available verified cooperative worker with matching trade skills in the customer's service area:
+        </p>
+        
+        <div id="assign-workers-list" style="display: flex; flex-direction: column; gap: 10px; max-height: 320px; overflow-y: auto;">
+          <!-- Populated dynamically with available workers -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="table-btn-action" onclick="window.adminApp.closeModal('modal-assign-worker')">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- 6. RESCHEDULE APPOINTMENT MODAL -->
+  <div class="modal-overlay" id="modal-reschedule-appointment">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>Reschedule Appointment</h3>
+        <button class="btn-drawer-close" onclick="window.adminApp.closeModal('modal-reschedule-appointment')">
+          <i data-lucide="x" style="width: 18px; height: 18px;"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Select New Date</label>
+          <input type="date" id="reschedule-date" class="input-field" style="padding-left: 14px;">
+        </div>
+        <div class="form-group">
+          <label>Select Preferred Time Slot</label>
+          <select id="reschedule-slot" class="input-field" style="padding-left: 14px;">
+            <option value="09:00 AM - 11:00 AM">09:00 AM - 11:00 AM (Morning)</option>
+            <option value="11:30 AM - 01:30 PM">11:30 AM - 01:30 PM (Midday)</option>
+            <option value="02:30 PM - 04:30 PM">02:30 PM - 04:30 PM (Afternoon)</option>
+            <option value="05:00 PM - 07:00 PM">05:00 PM - 07:00 PM (Evening)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Admin Note / Reason</label>
+          <input type="text" id="reschedule-reason" class="input-field" style="padding-left: 14px;" placeholder="Customer requested afternoon slot adjustment.">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="table-btn-action" onclick="window.adminApp.closeModal('modal-reschedule-appointment')">Cancel</button>
+        <button class="table-btn-action primary" onclick="window.adminApp.confirmReschedule()">
+          <span>Confirm Reschedule</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- 7. CANCEL APPOINTMENT MODAL -->
+  <div class="modal-overlay" id="modal-cancel-appointment">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>Cancel Appointment</h3>
+        <button class="btn-drawer-close" onclick="window.adminApp.closeModal('modal-cancel-appointment')">
+          <i data-lucide="x" style="width: 18px; height: 18px;"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 13px; color: var(--text-muted);">
+          Are you sure you want to cancel this booking? This will notify both the customer and assigned technician and update the cooperative dispatch register.
+        </p>
+        <div class="form-group">
+          <label>Cancellation Reason</label>
+          <select id="cancel-reason-select" class="input-field" style="padding-left: 14px;">
+            <option value="Customer requested cancellation">Customer requested cancellation</option>
+            <option value="Duplicate booking entry">Duplicate booking entry</option>
+            <option value="No technician reachable in radius">No technician reachable in radius</option>
+            <option value="Service issue resolved independently">Service issue resolved independently</option>
+            <option value="Other administrative reason">Other administrative reason</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="table-btn-action" onclick="window.adminApp.closeModal('modal-cancel-appointment')">Keep Booking</button>
+        <button class="table-btn-action" style="background: var(--emergency-red); color: #FFFFFF;" onclick="window.adminApp.confirmCancelAppointment()">
+          <span>Confirm Cancel</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- 8. CONTACT PARTY MODAL -->
+  <div class="modal-overlay" id="modal-contact-party">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="contact-modal-title">Contact Customer</h3>
+        <button class="btn-drawer-close" onclick="window.adminApp.closeModal('modal-contact-party')">
+          <i data-lucide="x" style="width: 18px; height: 18px;"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div style="background: var(--bg-subtle); padding: 14px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: space-between;">
+          <div>
+            <h4 style="font-size: 14px; font-weight: 700;" id="contact-name">P. Vishnu Vardhan</h4>
+            <span style="font-size: 12px; color: var(--text-muted);" id="contact-phone">+91 98480 22338</span>
+          </div>
+          <button class="table-btn-action primary" style="background: var(--primary-green); border-color: var(--primary-green);" onclick="window.adminApp.triggerSimulatedCall()">
+            <i data-lucide="phone" style="width: 14px; height: 14px;"></i>
+            <span>Call Now</span>
+          </button>
+        </div>
+
+        <div class="form-group">
+          <label>Send Official Cooperative Notification / SMS</label>
+          <textarea id="contact-sms-input" class="input-field" style="height: 80px; padding: 10px;" placeholder="Enter message text..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="table-btn-action" onclick="window.adminApp.closeModal('modal-contact-party')">Close</button>
+        <button class="table-btn-action primary" onclick="window.adminApp.sendSimulatedMessage()">
+          <i data-lucide="send" style="width: 14px; height: 14px;"></i>
+          <span>Send SMS / Message</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- 9. CUSTOMER PROFILE DRAWER -->
+  <div class="drawer-overlay" id="drawer-customer-details" onclick="if(event.target===this) window.adminApp.closeDrawer('drawer-customer-details')">
+    <div class="drawer-container">
+      <div class="drawer-header">
+        <div class="drawer-header-title">
+          <div class="table-avatar-img" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: var(--primary-green-light); color: var(--primary-green); font-weight: 800; font-size: 16px;">
+            <i data-lucide="user" style="width: 22px; height: 22px;"></i>
+          </div>
+          <div>
+            <h3 id="cd-name">P. Vishnu Vardhan</h3>
+            <span id="cd-id-tag" style="font-size: 12px; color: var(--text-muted);">Customer ID: CUST-1049 • Patron Member</span>
+          </div>
+        </div>
+        <button class="btn-drawer-close" onclick="window.adminApp.closeDrawer('drawer-customer-details')">
+          <i data-lucide="x" style="width: 18px; height: 18px;"></i>
+        </button>
+      </div>
+
+      <div class="drawer-body">
+        
+        <!-- Dividend & Total Spend Banner -->
+        <div style="background: linear-gradient(135deg, #EFF6FF 0%, #ECFDF5 100%); border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 14px 18px; display: flex; align-items: center; justify-content: space-between;">
+          <div>
+            <span style="font-size: 11px; text-transform: uppercase; font-weight: 800; color: var(--primary-blue);">Patronage Dividend Wallet</span>
+            <div style="font-size: 18px; font-weight: 800; color: var(--primary-green); margin-top: 2px;">
+              ₹420.00
+            </div>
+          </div>
+          <div style="text-align: right;">
+            <span style="font-size: 11px; text-transform: uppercase; font-weight: 800; color: var(--text-muted);">Total Bookings Completed</span>
+            <div style="font-size: 18px; font-weight: 800; color: var(--text-main); margin-top: 2px;" id="cd-total-completed">
+              6 Bookings
+            </div>
+          </div>
+        </div>
+
+        <!-- Personal Details -->
+        <div class="details-section-card">
+          <h4 class="details-section-title"><i data-lucide="user-check" style="width: 14px; height: 14px;"></i> Customer Contact & Address</h4>
+          <div class="details-kv-grid">
+            <div class="kv-item"><label>Primary Phone</label><span id="cd-phone">+91 98480 22338</span></div>
+            <div class="kv-item"><label>Email</label><span>vishnu@marketmail.com</span></div>
+            <div class="kv-item"><label>Primary Service Address</label><span id="cd-location">Indiranagar 100ft Rd, Bengaluru</span></div>
+            <div class="kv-item"><label>Customer Tier</label><span style="color: var(--primary-blue); font-weight: 700;">Verified Co-op Resident</span></div>
+          </div>
+        </div>
+
+        <!-- Booking History with Identical IDs -->
+        <div class="details-section-card">
+          <h4 class="details-section-title"><i data-lucide="history" style="width: 14px; height: 14px;"></i> Customer Booking History</h4>
+          <div id="cd-booking-history-list" style="display: flex; flex-direction: column; gap: 8px;">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+
+        <!-- Complaints & Support -->
+        <div class="details-section-card">
+          <h4 class="details-section-title"><i data-lucide="message-square-heart" style="width: 14px; height: 14px;"></i> Feedback & Support Inquiries</h4>
+          <div style="background: var(--bg-subtle); padding: 10px 14px; border-radius: var(--radius-sm); font-size: 12.5px;">
+            <strong>Rating Given:</strong> 5.0 ★ • "Ramesh Kumar arrived on time and fixed the mixer tap flawlessly without extra material markups!"
+          </div>
+        </div>
+
+      </div>
+
+      <div class="drawer-footer-actions">
+        <button class="table-btn-action" style="background: var(--primary-blue-light); color: var(--primary-blue); border-color: var(--primary-blue-subtle);" onclick="window.adminApp.openPreCallModal('customer')">
+          <i data-lucide="phone-call" style="width: 14px; height: 14px;"></i>
+          <span>Call Customer</span>
+        </button>
+        <button class="table-btn-action primary" onclick="window.adminApp.openChatWithCustomer(document.getElementById('cd-name').textContent)">
+          <i data-lucide="message-square" style="width: 14px; height: 14px;"></i>
+          <span>Open Chat</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- 10. FORGOT PASSWORD MODAL -->
+  <div class="modal-overlay" id="modal-forgot-password">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>Reset Administrator Credentials</h3>
+        <button class="btn-drawer-close" onclick="window.adminApp.closeModal('modal-forgot-password')">
+          <i data-lucide="x" style="width: 18px; height: 18px;"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 13px; color: var(--text-muted);">
+          Enter the registered Administrator Mobile Number or Society Email. A secure 6-digit verification OTP will be dispatched.
+        </p>
+        <div class="form-group">
+          <label>Registered Admin Email / Mobile</label>
+          <input type="text" id="reset-admin-email" class="input-field" style="padding-left: 14px;" value="admin@coopguild.org">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="table-btn-action" onclick="window.adminApp.closeModal('modal-forgot-password')">Cancel</button>
+        <button class="table-btn-action primary" onclick="window.adminApp.handleForgotPasswordSubmit()">
+          <span>Dispatch Reset OTP</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- 11. PRE-CALL SUPPORT VERIFICATION MODAL -->
+  <div class="modal-overlay" id="modal-pre-call-verification">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="precall-modal-title">Cooperative Phone Support Verification</h3>
+        <button class="btn-drawer-close" onclick="window.adminApp.closeModal('modal-pre-call-verification')">
+          <i data-lucide="x" style="width: 18px; height: 18px;"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="call-verification-card">
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div>
+              <span style="font-size: 11px; text-transform: uppercase; font-weight: 800; color: var(--text-muted);" id="precall-target-type">Customer Relay</span>
+              <h4 style="font-size: 16px; font-weight: 800; color: var(--text-main);" id="precall-target-name">P. Vishnu Vardhan</h4>
+            </div>
+            <span class="table-booking-id" id="precall-booking-id">CP-9104</span>
+          </div>
+          <div style="font-size: 13px; color: var(--text-body);" id="precall-target-phone">Phone: +91 98480 22338</div>
+        </div>
+
+        <div class="form-group">
+          <label>Mandatory Call Purpose (Recorded in Co-op Log)</label>
+          <select id="precall-purpose-select" class="input-field" style="padding-left: 14px;">
+            <option value="Address & Location Navigation Assistance">Address & Location Navigation Assistance</option>
+            <option value="Technician Doorstep Arrival & ETA Check">Technician Doorstep Arrival & ETA Check</option>
+            <option value="Estimate & Scope Verification">Estimate & Scope Verification</option>
+            <option value="Emergency SOS Dispatch Coordination">Emergency SOS Dispatch Coordination</option>
+            <option value="Support Ticket & Complaint Resolution">Support Ticket & Complaint Resolution</option>
+            <option value="Post-Service Workmanship & Warranty Inquiry">Post-Service Workmanship & Warranty Inquiry</option>
+          </select>
+        </div>
+
+        <div class="call-warning-box">
+          <i data-lucide="shield-check" style="width: 16px; height: 16px; color: var(--primary-green); flex-shrink: 0;"></i>
+          <span>Protected according to Cooperative Communications Privacy Protocol. Personal numbers are masked via encrypted relay where supported.</span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="table-btn-action" onclick="window.adminApp.closeModal('modal-pre-call-verification')">Cancel</button>
+        <button class="table-btn-action primary" style="background: var(--primary-green); border-color: var(--primary-green);" onclick="window.adminApp.confirmInitiateCall()">
+          <i data-lucide="phone-call" style="width: 14px; height: 14px;"></i>
+          <span>Connect Call</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- 12. ADD / EDIT SERVICE MODAL -->
+  <div class="modal-overlay" id="modal-service-edit">
+    <div class="modal-box" style="max-width: 560px;">
+      <div class="modal-header">
+        <h3 id="modal-service-title">Add / Edit Cooperative Service</h3>
+        <button class="btn-drawer-close" onclick="window.adminApp.closeModal('modal-service-edit')">
+          <i data-lucide="x" style="width: 18px; height: 18px;"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="edit-svc-id">
+        <div class="details-kv-grid">
+          <div class="form-group">
+            <label>Service Name</label>
+            <input type="text" id="edit-svc-name" class="input-field" style="padding-left: 14px;" placeholder="e.g. Tap & Mixer Leak Repair" required>
+          </div>
+          <div class="form-group">
+            <label>Trade Division</label>
+            <select id="edit-svc-category" class="input-field" style="padding-left: 14px;">
+              <option value="Plumbing">Plumbing</option>
+              <option value="Electrical">Electrical</option>
+              <option value="Carpentry">Carpentry</option>
+              <option value="Painting">Painting</option>
+              <option value="Cleaning">Cleaning</option>
+              <option value="Appliance Repair">Appliance Repair</option>
+              <option value="Other Services">Other Services</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Service Description</label>
+          <textarea id="edit-svc-desc" class="input-field" style="height: 65px; padding: 10px;" placeholder="Detailed scope of standard diagnostic and repair work..."></textarea>
+        </div>
+
+        <div class="details-kv-grid">
+          <div class="form-group">
+            <label>Required Skill / Grade</label>
+            <input type="text" id="edit-svc-skill" class="input-field" style="padding-left: 14px;" placeholder="e.g. Master Plumber">
+          </div>
+          <div class="form-group">
+            <label>Estimated Labour Time</label>
+            <input type="text" id="edit-svc-time" class="input-field" style="padding-left: 14px;" placeholder="e.g. 45 mins">
+          </div>
+        </div>
+
+        <div class="details-kv-grid">
+          <div class="form-group">
+            <label>Base Labour Charge (₹)</label>
+            <input type="number" id="edit-svc-price" class="input-field" style="padding-left: 14px;" placeholder="350">
+          </div>
+          <div class="form-group">
+            <label>Emergency Surge Fee (₹)</label>
+            <input type="number" id="edit-svc-emergency" class="input-field" style="padding-left: 14px;" placeholder="599">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Standard Material Category</label>
+          <input type="text" id="edit-svc-mat-cat" class="input-field" style="padding-left: 14px;" placeholder="e.g. Plumbing Valves & Teflon Packs">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="table-btn-action" onclick="window.adminApp.closeModal('modal-service-edit')">Cancel</button>
+        <button class="table-btn-action primary" onclick="window.adminApp.saveServiceItem()">
+          <i data-lucide="save" style="width: 14px; height: 14px;"></i>
+          <span>Save Service Details</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- 13. EDIT MONTHLY RATE MODAL -->
+  <div class="modal-overlay" id="modal-rate-edit">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>Edit Service Labour Rate</h3>
+        <button class="btn-drawer-close" onclick="window.adminApp.closeModal('modal-rate-edit')">
+          <i data-lucide="x" style="width: 18px; height: 18px;"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Select Service</label>
+          <select id="edit-rate-service-select" class="input-field" style="padding-left: 14px;" onchange="window.adminApp.onRateServiceSelectChange()">
+            <!-- Options populated dynamically -->
+          </select>
+        </div>
+
+        <div class="details-kv-grid">
+          <div class="form-group">
+            <label>Previous Rate (Aug 2026)</label>
+            <input type="text" id="edit-rate-prev-display" class="input-field" style="padding-left: 14px;" readonly disabled>
+          </div>
+          <div class="form-group">
+            <label>Proposed Rate (Sep 2026)</label>
+            <input type="number" id="edit-rate-current-input" class="input-field" style="padding-left: 14px;">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Emergency Rate</label>
+          <input type="number" id="edit-rate-emergency-input" class="input-field" style="padding-left: 14px;">
+        </div>
+
+        <div class="form-group">
+          <label>Cooperative Supervisory Board Remarks / Reason</label>
+          <input type="text" id="edit-rate-remarks" class="input-field" style="padding-left: 14px;" placeholder="e.g. Revised based on city consumer price index and fuel allowances.">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="table-btn-action" onclick="window.adminApp.closeModal('modal-rate-edit')">Cancel</button>
+        <button class="table-btn-action primary" onclick="window.adminApp.saveSingleRate()">
+          <span>Update Rate</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- 14. VIEW RATE HISTORY MODAL -->
+  <div class="modal-overlay" id="modal-rate-history">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div>
+          <h3 id="history-modal-service-name">Plumbing Rate History</h3>
+          <span style="font-size: 12px; color: var(--text-muted);">Cooperative Monthly Audit History</span>
+        </div>
+        <button class="btn-drawer-close" onclick="window.adminApp.closeModal('modal-rate-history')">
+          <i data-lucide="x" style="width: 18px; height: 18px;"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="history-timeline" id="history-timeline-container">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="table-btn-action primary" onclick="window.adminApp.closeModal('modal-rate-history')">Close</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- 15. ADD / EDIT MATERIAL MODAL -->
+  <div class="modal-overlay" id="modal-material-edit">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="modal-material-title">Add / Edit Standard Material</h3>
+        <button class="btn-drawer-close" onclick="window.adminApp.closeModal('modal-material-edit')">
+          <i data-lucide="x" style="width: 18px; height: 18px;"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="edit-mat-id">
+        <div class="form-group">
+          <label>Material Name & Spec</label>
+          <input type="text" id="edit-mat-name" class="input-field" style="padding-left: 14px;" placeholder="e.g. PVC Pipe 1-inch (3m)" required>
+        </div>
+
+        <div class="details-kv-grid">
+          <div class="form-group">
+            <label>Category</label>
+            <select id="edit-mat-cat" class="input-field" style="padding-left: 14px;">
+              <option value="Plumbing">Plumbing</option>
+              <option value="Electrical">Electrical</option>
+              <option value="Carpentry">Carpentry</option>
+              <option value="Paint">Paint</option>
+              <option value="Chemicals">Chemicals</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Effective Month</label>
+            <input type="text" id="edit-mat-month" class="input-field" style="padding-left: 14px;" value="September 2026">
+          </div>
+        </div>
+
+        <div class="details-kv-grid">
+          <div class="form-group">
+            <label>Previous Cost (₹)</label>
+            <input type="number" id="edit-mat-prev-cost" class="input-field" style="padding-left: 14px;" placeholder="120">
+          </div>
+          <div class="form-group">
+            <label>Current Wholesale Cost (₹)</label>
+            <input type="number" id="edit-mat-curr-cost" class="input-field" style="padding-left: 14px;" placeholder="135">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="table-btn-action" onclick="window.adminApp.closeModal('modal-material-edit')">Cancel</button>
+        <button class="table-btn-action primary" onclick="window.adminApp.saveMaterialItem()">
+          <i data-lucide="save" style="width: 14px; height: 14px;"></i>
+          <span>Save Material Cost</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- 16. ESTIMATE DETAIL & FLAGGING MODAL -->
+  <div class="modal-overlay" id="modal-estimate-flag">
+    <div class="modal-box" style="max-width: 600px;">
+      <div class="modal-header">
+        <div>
+          <h3>Estimate Oversight & Audit Review</h3>
+          <span class="table-booking-id" id="est-modal-booking-tag">CP-9104</span>
+        </div>
+        <button class="btn-drawer-close" onclick="window.adminApp.closeModal('modal-estimate-flag')">
+          <i data-lucide="x" style="width: 18px; height: 18px;"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div style="background: var(--bg-subtle); padding: 14px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: space-between;">
+          <div>
+            <div style="font-size: 13.5px; font-weight: 700;" id="est-modal-service">Plumbing Leakage & Pipe Repair</div>
+            <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;" id="est-modal-parties">Customer: P. Vishnu Vardhan • Worker: Ramesh Kumar (#402)</div>
+          </div>
+          <div style="text-align: right;">
+            <span class="status-pill approved" id="est-modal-status-pill">Customer Approved</span>
+            <div style="font-size: 16px; font-weight: 800; color: var(--primary-blue); margin-top: 4px;" id="est-modal-total-display">₹479.00</div>
+          </div>
+        </div>
+
+        <div class="details-section-card">
+          <h5 style="font-size: 12px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px;">Itemized Labour & Materials Breakdown</h5>
+          <div class="details-kv-grid" style="margin-bottom: 8px;">
+            <div class="kv-item"><label>Diagnostic Problem</label><span id="est-modal-problem">Ceramic disc cartridge cracked & pipe nipple corroded</span></div>
+            <div class="kv-item"><label>Labour Component</label><span id="est-modal-labour">Disassembly, valve reseat & test (₹199.00)</span></div>
+            <div class="kv-item"><label>Materials Component</label><span id="est-modal-materials">Ceramic cartridge replacement + Teflon pack (₹280.00)</span></div>
+            <div class="kv-item"><label>Emergency Surcharge</label><span id="est-modal-emergency">₹0.00</span></div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Flag for Supervisory Review / Audit Note</label>
+          <textarea id="est-flag-remarks" class="input-field" style="height: 70px; padding: 10px;" placeholder="Optional: Flag estimate if material quantities or labour duration appear unusual..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="table-btn-action" onclick="window.adminApp.closeModal('modal-estimate-flag')">Close</button>
+        <button class="table-btn-action" style="background: var(--warning-amber-light); color: var(--warning-amber); border-color: #FCD34D;" onclick="window.adminApp.flagEstimateForReview()">
+          <i data-lucide="flag" style="width: 14px; height: 14px;"></i>
+          <span>Flag for Review</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- 17. SUPPORT TICKET DETAIL & REPLY MODAL -->
+  <div class="modal-overlay" id="modal-ticket-details">
+    <div class="modal-box" style="max-width: 620px;">
+      <div class="modal-header">
+        <div>
+          <h3 id="ticket-modal-title">Ticket TCK-801: Booking Issue</h3>
+          <span class="table-booking-id" id="ticket-modal-booking-id">CP-9104</span>
+        </div>
+        <button class="btn-drawer-close" onclick="window.adminApp.closeModal('modal-ticket-details')">
+          <i data-lucide="x" style="width: 18px; height: 18px;"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div style="background: var(--bg-subtle); padding: 14px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: space-between;">
+          <div>
+            <div style="font-size: 14px; font-weight: 700;" id="ticket-modal-customer">P. Vishnu Vardhan</div>
+            <div style="font-size: 12px; color: var(--text-muted);" id="ticket-modal-date">Created: 23 Sep 2026, 11:20 AM</div>
+          </div>
+          <div style="text-align: right;">
+            <span class="priority-pill high" id="ticket-modal-priority">High Priority</span>
+            <div style="margin-top: 4px;">
+              <span class="status-pill pending" id="ticket-modal-status">Open</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="details-section-card">
+          <h5 style="font-size: 12px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px;">Reported Issue</h5>
+          <p id="ticket-modal-problem" style="font-size: 13.5px; color: var(--text-body);">
+            Customer requested clarification on technician ETA and diagnostic fee receipt for building maintenance claim.
+          </p>
+        </div>
+
+        <div class="details-kv-grid">
+          <div class="form-group">
+            <label>Assigned Staff</label>
+            <select id="ticket-assign-staff-select" class="input-field" style="padding-left: 14px;">
+              <option value="A. S. Murthy (Secretary)">A. S. Murthy (Secretary)</option>
+              <option value="R. Nagaraj (Supervisor)">R. Nagaraj (Supervisor)</option>
+              <option value="K. V. Rao (Ombudsperson)">K. V. Rao (Ombudsperson)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Update Ticket Status</label>
+            <select id="ticket-status-update-select" class="input-field" style="padding-left: 14px;">
+              <option value="Open">Open</option>
+              <option value="Assigned">Assigned</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Resolved">Resolved</option>
+              <option value="Closed">Closed</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Reply to Customer / Resolution Log</label>
+          <textarea id="ticket-reply-text" class="input-field" style="height: 80px; padding: 10px;" placeholder="Enter official resolution notes or dispatch advice..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="table-btn-action" onclick="window.adminApp.openChatWithCustomer(document.getElementById('ticket-modal-customer').textContent)">
+          <i data-lucide="message-square" style="width: 14px; height: 14px;"></i>
+          <span>Chat with Customer</span>
+        </button>
+        <button class="table-btn-action" onclick="window.adminApp.contactParty('worker', 'Ramesh Kumar', '+91 98450 40201')">
+          <i data-lucide="phone" style="width: 14px; height: 14px;"></i>
+          <span>Contact Worker</span>
+        </button>
+        <button class="table-btn-action primary" onclick="window.adminApp.saveTicketResolution()">
+          <i data-lucide="check-circle-2" style="width: 14px; height: 14px;"></i>
+          <span>Save & Resolve</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- 18. RECORD WELFARE BENEFIT MODAL -->
+  <div class="modal-overlay" id="modal-welfare-record">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>Record Worker Welfare Support</h3>
+        <button class="btn-drawer-close" onclick="window.adminApp.closeModal('modal-welfare-record')">
+          <i data-lucide="x" style="width: 18px; height: 18px;"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Beneficiary Worker</label>
+          <select id="welfare-worker-select" class="input-field" style="padding-left: 14px;">
+            <!-- Populated dynamically with workers -->
+          </select>
+        </div>
+
+        <div class="details-kv-grid">
+          <div class="form-group">
+            <label>Welfare Program / Benefit Type</label>
+            <select id="welfare-program-select" class="input-field" style="padding-left: 14px;">
+              <option value="Welfare Fund">Welfare Fund Dividend</option>
+              <option value="Emergency Financial Support">Emergency Financial Support</option>
+              <option value="Accident Support">Accident Support</option>
+              <option value="Family Support">Family Support</option>
+              <option value="Training Assistance">Training Assistance</option>
+              <option value="Safety Equipment Support">Safety Equipment Support</option>
+              <option value="Skill Development">Skill Development</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Disbursement Amount (₹)</label>
+            <input type="number" id="welfare-amount-input" class="input-field" style="padding-left: 14px;" placeholder="5000">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Disbursement Status</label>
+          <select id="welfare-status-select" class="input-field" style="padding-left: 14px;">
+            <option value="Approved">Approved</option>
+            <option value="Provided">Provided</option>
+            <option value="Requested">Requested</option>
+            <option value="Rejected">Rejected</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Approval Remarks / Justification</label>
+          <input type="text" id="welfare-remarks-input" class="input-field" style="padding-left: 14px;" placeholder="e.g. Safety harness and insulated boots upgrade grant.">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="table-btn-action" onclick="window.adminApp.closeModal('modal-welfare-record')">Cancel</button>
+        <button class="table-btn-action primary" onclick="window.adminApp.confirmRecordWelfare()">
+          <i data-lucide="check" style="width: 14px; height: 14px;"></i>
+          <span>Record Disbursement</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- 19. ADD / UPDATE INSURANCE POLICY MODAL -->
+  <div class="modal-overlay" id="modal-insurance-edit">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="modal-insurance-title">Add / Update Group Insurance Policy</h3>
+        <button class="btn-drawer-close" onclick="window.adminApp.closeModal('modal-insurance-edit')">
+          <i data-lucide="x" style="width: 18px; height: 18px;"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Insured Artisan</label>
+          <select id="ins-worker-select" class="input-field" style="padding-left: 14px;">
+            <!-- Populated dynamically -->
+          </select>
+        </div>
+
+        <div class="details-kv-grid">
+          <div class="form-group">
+            <label>Insurance Provider</label>
+            <input type="text" id="ins-provider-input" class="input-field" style="padding-left: 14px;" value="National Insurance Co-op Pool">
+          </div>
+          <div class="form-group">
+            <label>Policy Number</label>
+            <input type="text" id="ins-policy-input" class="input-field" style="padding-left: 14px;" placeholder="COOP-IN-701">
+          </div>
+        </div>
+
+        <div class="details-kv-grid">
+          <div class="form-group">
+            <label>Coverage Plan</label>
+            <input type="text" id="ins-coverage-input" class="input-field" style="padding-left: 14px;" value="₹5,00,000 Group Accident & Medical">
+          </div>
+          <div class="form-group">
+            <label>Expiry Date</label>
+            <input type="date" id="ins-expiry-input" class="input-field" style="padding-left: 14px;" value="2027-03-31">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="table-btn-action" onclick="window.adminApp.closeModal('modal-insurance-edit')">Cancel</button>
+        <button class="table-btn-action primary" onclick="window.adminApp.saveInsurancePolicy()">
+          <i data-lucide="shield" style="width: 14px; height: 14px;"></i>
+          <span>Save Policy</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- 20. RECORD INSURANCE CLAIM MODAL -->
+  <div class="modal-overlay" id="modal-insurance-claim">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>Record Worker Insurance Claim</h3>
+        <button class="btn-drawer-close" onclick="window.adminApp.closeModal('modal-insurance-claim')">
+          <i data-lucide="x" style="width: 18px; height: 18px;"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Artisan Claimant</label>
+          <select id="claim-worker-select" class="input-field" style="padding-left: 14px;">
+            <!-- Populated dynamically -->
+          </select>
+        </div>
+
+        <div class="details-kv-grid">
+          <div class="form-group">
+            <label>Incident Date</label>
+            <input type="date" id="claim-date-input" class="input-field" style="padding-left: 14px;" value="2026-09-20">
+          </div>
+          <div class="form-group">
+            <label>Claim Amount (₹)</label>
+            <input type="number" id="claim-amount-input" class="input-field" style="padding-left: 14px;" placeholder="18500">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Hospital / Treatment Details</label>
+          <textarea id="claim-details-input" class="input-field" style="height: 70px; padding: 10px;" placeholder="e.g. Minor wrist sprain during pipe replacement, Manipal Hospital outpatient treatment."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Claim Status</label>
+          <select id="claim-status-select" class="input-field" style="padding-left: 14px;">
+            <option value="Claim Submitted">Claim Submitted</option>
+            <option value="Claim Approved">Claim Approved</option>
+            <option value="Claim Rejected">Claim Rejected</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="table-btn-action" onclick="window.adminApp.closeModal('modal-insurance-claim')">Cancel</button>
+        <button class="table-btn-action primary" onclick="window.adminApp.saveInsuranceClaim()">
+          <i data-lucide="file-check" style="width: 14px; height: 14px;"></i>
+          <span>Submit Claim Log</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ==============================================================
+       PART 3 MODALS: NOTIFICATIONS, LOCATION, SHIFTS
+  ============================================================== -->
+
+  <!-- 21. ADMIN NOTIFICATIONS MODAL -->
+  <div class="modal-overlay" id="modal-admin-notifications">
+    <div class="modal-box" style="max-width: 620px;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <i data-lucide="bell" style="width: 18px; height: 18px; color: var(--primary-blue);"></i>
+          <h3>Cooperative Dispatch &amp; Operations Alerts</h3>
+        </div>
+        <button class="btn-drawer-close" onclick="window.adminApp.closeModal('modal-admin-notifications')">
+          <i data-lucide="x" style="width: 18px; height: 18px;"></i>
+        </button>
+      </div>
+
+      <div style="padding: 10px 18px; background: #F8FAFC; border-bottom: 1px solid var(--border-light); display: flex; align-items: center; justify-content: space-between;">
+        <span style="font-size: 12px; font-weight: 700; color: var(--text-muted);">10 Active Operational Alerts</span>
+        <button class="table-btn-action" style="font-size: 11px; padding: 3px 8px;" onclick="window.adminApp.markAllNotificationsRead()">
+          <span>Mark All Read</span>
+        </button>
+      </div>
+
+      <div class="modal-body" style="padding: 0; max-height: 480px; overflow-y: auto;" id="admin-notifications-list">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <div class="modal-footer">
+        <button class="table-btn-action primary" onclick="window.adminApp.closeModal('modal-admin-notifications')">Close</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- 22. CANDIDATE WORKER LOCATION & ROUTE RADAR MODAL -->
+  <div class="modal-overlay" id="modal-candidate-location">
+    <div class="modal-box" style="max-width: 580px;">
+      <div class="modal-header">
+        <div>
+          <h3 id="loc-modal-worker-name">Artisan Proximity &amp; Route Radar</h3>
+          <span style="font-size: 12px; color: var(--text-muted);" id="loc-modal-worker-meta">Indiranagar Sector 1</span>
+        </div>
+        <button class="btn-drawer-close" onclick="window.adminApp.closeModal('modal-candidate-location')">
+          <i data-lucide="x" style="width: 18px; height: 18px;"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div style="background: #F1F5F9; border-radius: var(--radius-sm); height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; border: 1px solid #CBD5E1; margin-bottom: 14px;">
+          <!-- SVG Radar Visual -->
+          <svg width="160" height="160" viewBox="0 0 160 160">
+            <circle cx="80" cy="80" r="70" fill="none" stroke="#93C5FD" stroke-width="1.5" stroke-dasharray="4,4"/>
+            <circle cx="80" cy="80" r="45" fill="none" stroke="#60A5FA" stroke-width="1.5"/>
+            <circle cx="80" cy="80" r="20" fill="rgba(29, 78, 216, 0.15)"/>
+            <circle cx="80" cy="80" r="6" fill="#1D4ED8"/>
+            <!-- Customer Location Target -->
+            <circle cx="80" cy="80" r="8" fill="none" stroke="#1D4ED8" stroke-width="2"/>
+            <!-- Worker Position -->
+            <circle cx="108" cy="55" r="7" fill="#059669" stroke="#FFFFFF" stroke-width="2"/>
+            <line x1="80" y1="80" x2="108" y2="55" stroke="#059669" stroke-width="2" stroke-dasharray="2,2"/>
+          </svg>
+          <div style="position: absolute; bottom: 8px; font-size: 11px; color: var(--text-muted); font-weight: 600;">
+            Direct Distance: <span id="loc-modal-distance-text" style="color: var(--primary-green-dark); font-weight: 800;">1.2 km</span> • Transit ETA: <span id="loc-modal-eta-text" style="color: var(--primary-blue); font-weight: 800;">~10 mins</span>
+          </div>
+        </div>
+
+        <div class="details-kv-grid">
+          <div class="kv-item">
+            <label>Customer Destination</label>
+            <span id="loc-modal-customer-addr">Indiranagar 100ft Rd, Bengaluru</span>
+          </div>
+          <div class="kv-item">
+            <label>Artisan Current Position</label>
+            <span id="loc-modal-worker-pos">Domlur Flyover Junction (Standby)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="table-btn-action" onclick="window.adminApp.closeModal('modal-candidate-location')">Close</button>
+        <button class="table-btn-action primary" onclick="window.adminApp.confirmAssignCandidateFromLocation()">
+          <i data-lucide="check" style="width: 14px; height: 14px;"></i>
+          <span>Confirm Dispatch</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- 23. SHIFT ROTATION PLANNER MODAL -->
+  <div class="modal-overlay" id="modal-plan-shifts">
+    <div class="modal-box" style="max-width: 520px;">
+      <div class="modal-header">
+        <h3>Cooperative Shift Rotation Planner</h3>
+        <button class="btn-drawer-close" onclick="window.adminApp.closeModal('modal-plan-shifts')">
+          <i data-lucide="x" style="width: 18px; height: 18px;"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Target Service Division</label>
+          <select id="shift-plan-trade-select" class="input-field" style="padding-left: 14px;">
+            <option value="Plumbing">Plumbing (Highest Deficit)</option>
+            <option value="Cleaning">Cleaning</option>
+            <option value="Electrical">Electrical</option>
+            <option value="All Trades">All Trades</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Shift Timing Block</label>
+          <select id="shift-plan-slot-select" class="input-field" style="padding-left: 14px;">
+            <option value="Morning">Morning Shift (08:00 AM – 02:00 PM)</option>
+            <option value="Afternoon">Afternoon Shift (02:00 PM – 08:00 PM)</option>
+            <option value="Night Emergency">Night Emergency Reserve (08:00 PM – 08:00 AM)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Artisans to Allocate</label>
+          <input type="number" id="shift-plan-count-input" class="input-field" style="padding-left: 14px;" value="8" min="1" max="50">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="table-btn-action" onclick="window.adminApp.closeModal('modal-plan-shifts')">Cancel</button>
+        <button class="table-btn-action primary" onclick="window.adminApp.saveShiftPlan()">
+          <i data-lucide="calendar" style="width: 14px; height: 14px;"></i>
+          <span>Apply Shift Schedule</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==============================================================
+       PART 3 MODALS: NOTIFICATIONS, LOCATION, SHIFTS
+  ============================================================== -->
+
+  <!-- 21. ADMIN NOTIFICATIONS MODAL -->
+  <div class="modal-overlay" id="modal-admin-notifications">
+    <div class="modal-box" style="max-width: 620px;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <i data-lucide="bell" style="width: 18px; height: 18px; color: var(--primary-blue);"></i>
+          <h3>Cooperative Dispatch &amp; Operations Alerts</h3>
+        </div>
+        <button class="btn-drawer-close" onclick="window.adminApp.closeModal('modal-admin-notifications')">
+          <i data-lucide="x" style="width: 18px; height: 18px;"></i>
+        </button>
+      </div>
+
+      <div style="padding: 10px 18px; background: #F8FAFC; border-bottom: 1px solid var(--border-light); display: flex; align-items: center; justify-content: space-between;">
+        <span style="font-size: 12px; font-weight: 700; color: var(--text-muted);">10 Active Operational Alerts</span>
+        <button class="table-btn-action" style="font-size: 11px; padding: 3px 8px;" onclick="window.adminApp.markAllNotificationsRead()">
+          <span>Mark All Read</span>
+        </button>
+      </div>
+
+      <div class="modal-body" style="padding: 0; max-height: 480px; overflow-y: auto;" id="admin-notifications-list">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <div class="modal-footer">
+        <button class="table-btn-action primary" onclick="window.adminApp.closeModal('modal-admin-notifications')">Close</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- 22. CANDIDATE WORKER LOCATION & ROUTE RADAR MODAL -->
+  <div class="modal-overlay" id="modal-candidate-location">
+    <div class="modal-box" style="max-width: 580px;">
+      <div class="modal-header">
+        <div>
+          <h3 id="loc-modal-worker-name">Artisan Proximity &amp; Route Radar</h3>
+          <span style="font-size: 12px; color: var(--text-muted);" id="loc-modal-worker-meta">Indiranagar Sector 1</span>
+        </div>
+        <button class="btn-drawer-close" onclick="window.adminApp.closeModal('modal-candidate-location')">
+          <i data-lucide="x" style="width: 18px; height: 18px;"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div style="background: #F1F5F9; border-radius: var(--radius-sm); height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; border: 1px solid #CBD5E1; margin-bottom: 14px;">
+          <!-- SVG Radar Visual -->
+          <svg width="160" height="160" viewBox="0 0 160 160">
+            <circle cx="80" cy="80" r="70" fill="none" stroke="#93C5FD" stroke-width="1.5" stroke-dasharray="4,4"/>
+            <circle cx="80" cy="80" r="45" fill="none" stroke="#60A5FA" stroke-width="1.5"/>
+            <circle cx="80" cy="80" r="20" fill="rgba(29, 78, 216, 0.15)"/>
+            <circle cx="80" cy="80" r="6" fill="#1D4ED8"/>
+            <!-- Customer Location Target -->
+            <circle cx="80" cy="80" r="8" fill="none" stroke="#1D4ED8" stroke-width="2"/>
+            <!-- Worker Position -->
+            <circle cx="108" cy="55" r="7" fill="#059669" stroke="#FFFFFF" stroke-width="2"/>
+            <line x1="80" y1="80" x2="108" y2="55" stroke="#059669" stroke-width="2" stroke-dasharray="2,2"/>
+          </svg>
+          <div style="position: absolute; bottom: 8px; font-size: 11px; color: var(--text-muted); font-weight: 600;">
+            Direct Distance: <span id="loc-modal-distance-text" style="color: var(--primary-green-dark); font-weight: 800;">1.2 km</span> • Transit ETA: <span id="loc-modal-eta-text" style="color: var(--primary-blue); font-weight: 800;">~10 mins</span>
+          </div>
+        </div>
+
+        <div class="details-kv-grid">
+          <div class="kv-item">
+            <label>Customer Destination</label>
+            <span id="loc-modal-customer-addr">Indiranagar 100ft Rd, Bengaluru</span>
+          </div>
+          <div class="kv-item">
+            <label>Artisan Current Position</label>
+            <span id="loc-modal-worker-pos">Domlur Flyover Junction (Standby)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="table-btn-action" onclick="window.adminApp.closeModal('modal-candidate-location')">Close</button>
+        <button class="table-btn-action primary" onclick="window.adminApp.confirmAssignCandidateFromLocation()">
+          <i data-lucide="check" style="width: 14px; height: 14px;"></i>
+          <span>Confirm Dispatch</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- 23. SHIFT ROTATION PLANNER MODAL -->
+  <div class="modal-overlay" id="modal-plan-shifts">
+    <div class="modal-box" style="max-width: 520px;">
+      <div class="modal-header">
+        <h3>Cooperative Shift Rotation Planner</h3>
+        <button class="btn-drawer-close" onclick="window.adminApp.closeModal('modal-plan-shifts')">
+          <i data-lucide="x" style="width: 18px; height: 18px;"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Target Service Division</label>
+          <select id="shift-plan-trade-select" class="input-field" style="padding-left: 14px;">
+            <option value="Plumbing">Plumbing (Highest Deficit)</option>
+            <option value="Cleaning">Cleaning</option>
+            <option value="Electrical">Electrical</option>
+            <option value="All Trades">All Trades</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Shift Timing Block</label>
+          <select id="shift-plan-slot-select" class="input-field" style="padding-left: 14px;">
+            <option value="Morning">Morning Shift (08:00 AM – 02:00 PM)</option>
+            <option value="Afternoon">Afternoon Shift (02:00 PM – 08:00 PM)</option>
+            <option value="Night Emergency">Night Emergency Reserve (08:00 PM – 08:00 AM)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Artisans to Allocate</label>
+          <input type="number" id="shift-plan-count-input" class="input-field" style="padding-left: 14px;" value="8" min="1" max="50">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="table-btn-action" onclick="window.adminApp.closeModal('modal-plan-shifts')">Cancel</button>
+        <button class="table-btn-action primary" onclick="window.adminApp.saveShiftPlan()">
+          <i data-lucide="calendar" style="width: 14px; height: 14px;"></i>
+          <span>Apply Shift Schedule</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Application Logic -->
+  <script src="app.js"></script>
+</body>
+</html>
